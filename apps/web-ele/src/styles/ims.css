@@ -1,0 +1,49 @@
+.text-lg {
+  font-size: 18px;
+}
+
+.text-sm {
+  font-size: 18px !important;
+}
+
+/* 全局表格字体大小 */
+.vben-table-wrapper .vxe-table,
+.vben-table-wrapper .vxe-table *,
+.vxe-grid--layout-body-wrapper .vxe-buttons--wrapper div,
+.vxe-table--render-default .vxe-header--column,
+.vxe-table--render-default .vxe-body--column {
+  font-size: 16px;
+}
+
+/* 全局控制 Grid 表单字体大小 */
+.vxe-grid--form-wrapper,
+.vben-table-wrapper .vben-form,
+.vben-table-wrapper .vben-form *,
+.vben-table-wrapper .el-form-item__content *,
+.vben-table-wrapper .el-form-item__label {
+  font-size: 16px;
+}
+
+.vben-menu .vben-sub-menu-content__title,
+.vben-menu .vben-menu-item__content {
+  font-size: 16px;
+}
+
+.el-descriptions .el-descriptions__header .el-descriptions__title {
+  font-size: 18px;
+}
+
+.el-descriptions
+  .el-descriptions__body
+  .el-descriptions__table.is-bordered
+  .el-descriptions__cell {
+  font-size: 16px;
+}
+
+.el-tabs .el-tabs__header .el-tabs__item {
+  font-size: 16px;
+}
+
+.el-button span {
+  font-size: 16px;
+}
