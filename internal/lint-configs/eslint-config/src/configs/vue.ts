@@ -64,7 +64,7 @@ export async function vue(): Promise<Linter.Config[]> {
         ],
         'vue/attributes-order': 'off',
         'vue/block-order': [
-          'error',
+          'off',
           {
             order: ['script', 'template', 'style'],
           },

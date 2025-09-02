@@ -1,370 +1,83 @@
-<script lang="ts" setup>
-import type {
-  VxeGridListeners,
-  VxeTableGridOptions,
-} from '#/adapter/vxe-table';
-import type { InStorageApi, SupplierApi } from '#/api';
-
-import { nextTick, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-import { Page, useVbenModal } from '@vben/common-ui';
-import { IconifyIcon } from '@vben/icons';
-
-import dayjs from 'dayjs';
-import {
-  ElButton,
-  ElButtonGroup,
-  ElDropdown,
-  ElDropdownItem,
-  ElDropdownMenu,
-  ElMessage,
-  ElTag,
-} from 'element-plus';
-
-import { useSelectedRow, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteInStorageById, getInStorageCode, getInStorageList } from '#/api';
-import { statusFlagMap, unloadingMap, useMenuRights } from '#/utils';
-
-import { useColumns, useGridFormSchema } from './data';
-import Audit from './modules/audit.vue';
-import Detail from './modules/detail.vue';
-import DetailPrint from './modules/detailPrint.vue';
-import Form from './modules/form.vue';
-import SettlementForm from './modules/settlementForm.vue';
-import StoreForm from './modules/storeForm.vue';
-import SupplierList from './modules/supplierList.vue';
-
-const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
-
-console.warn('rights', rights);
-
-// 定义一个标志来防止重复初始化
-let isInitialized = false;
-
-onMounted(() => {
-  if (!isInitialized) {
-    isInitialized = true;
-
-    // 延迟更新schema，避免立即触发查询
-    nextTick(() => {
-      gridApi.formApi.updateSchema([
-        {
-          fieldName: 'supplierName',
-          componentProps: {
-            onClick: () => {
-              supplierModelApi.open();
-            },
-          },
-        },
-      ]);
-
-      // Schema更新完成后再初始化数据
-      nextTick(() => {
-        initializeData();
-      });
-    });
-  }
-});
-// 防止重复请求的标志
-const isQuerying = ref(false);
-
-const [Grid, gridApi] = useVbenVxeGrid({
-  formOptions: {
-    schema: useGridFormSchema(),
-    submitOnChange: false, // 关闭自动提交，改为手动控制
-    fieldMappingTime: [['rangePicker', ['startTime', 'endTime'], 'X']],
-    wrapperClass: 'grid-cols-1 md:grid-cols-4 lg:grid-cols-4',
-  },
-  gridOptions: {
-    columns: useColumns(),
-    height: 'auto',
-    keepSource: true,
-    showOverflow: false,
-    pagerConfig: {
-      pageSize: 40,
-      pageSizes: [10, 15, 20, 40, 50, 100],
-    },
-    proxyConfig: {
-      response: {
-        result: 'data',
-        total: 'total',
-        list: 'data',
-      },
-      ajax: {
-        query: async ({ page, sort, sorts }, formValues) => {
-          // 防止重复请求
-          if (isQuerying.value) {
-            console.warn(
-              'Query already in progress, skipping duplicate request',
-            );
-            return { data: [], total: 0 };
-          }
-
-          try {
-            isQuerying.value = true;
-            console.warn('Executing query:', { page, sort, sorts, formValues });
-
-            const result = await getInStorageList({
-              ...formValues,
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-              sortParam: sort.field
-                ? {
-                    field: sort.field,
-                    type: sort.order === 'asc' ? 1 : -1, // 排序类型, 1 正序 -1 倒序
-                  }
-                : undefined,
-            });
-
-            return result;
-          } finally {
-            isQuerying.value = false;
-          }
-        },
-      },
-    },
-    rowConfig: {
-      keyField: 'id',
-      isCurrent: true,
-      isHover: true,
-    },
-    radioConfig: {
-      // labelField: 'name',
-      trigger: 'row',
-    },
-    sortConfig: {
-      trigger: 'cell',
-      remote: true,
-    },
-
-    toolbarConfig: {
-      custom: true,
-      export: false,
-      refresh: { code: 'query' },
-      search: true,
-      zoom: true,
-    },
-  } as VxeTableGridOptions<InStorageApi.InStorage>,
-  gridEvents: {
-    // cellClick: ({ row }) => {
-    //   // message.info(`cell-click: ${row.name}`);
-    // },
-    // radioChange({ row }: { row: InStorageApi.InStorage }) {
-    //   selectRow.value = row;
-    // },
-    sortChange({ column }) {
-      const field = column?.field;
-      const order = column?.order;
-
-      if (field && order) {
-        gridApi.query();
-      }
-    },
-  } as VxeGridListeners<InStorageApi.InStorage>,
-});
-
-function onRefresh() {
-  gridApi.grid.clearRadioRow();
-  // 添加防重复检查
-  if (!isQuerying.value) {
-    gridApi.query();
-  }
-}
-
-// 手动搜索函数
-function onSearch() {
-  if (!isQuerying.value) {
-    gridApi.query();
-  }
-}
-
-// 初始化页面数据
-function initializeData() {
-  if (!isQuerying.value) {
-    // 延迟执行，确保表单初始化完成
-    setTimeout(() => {
-      gridApi.query();
-    }, 100);
-  }
-}
-
-const [FormModel, formModelApi] = useVbenModal({
-  connectedComponent: Form,
-  centered: true,
-});
-function onCreate() {
-  getInStorageCode().then(({ data }: { data: string }) => {
-    formModelApi
-      .setData({
-        code: data,
-        rights: [...rights.value],
-      })
-      .open();
-  });
-}
-function editSelectRow() {
-  const selectData = gridApi.grid.getRadioRecord();
-  useSelectedRow(selectData)((row) => {
-    if (![1, 5].includes(row.statusFlag)) {
-      ElMessage({
-        message: `只能修改草稿状态的入库单!`,
-        type: 'warning',
-        plain: true,
-      });
-      return;
-    }
-    formModelApi.setData({ ...row, rights: [...rights.value] }).open();
-  });
-}
-function deleteSelectRow() {
-  useSelectedRow(gridApi.grid.getRadioRecord())(
-    onDelete as (data: InStorageApi.InStorage | undefined) => void,
-    true,
-  );
-}
-function onDelete(row: InStorageApi.InStorage) {
-  const hideLoading = ElMessage({
-    message: `正在删除!`,
-    type: 'info',
-    plain: true,
-    duration: 0,
-  });
-  deleteInStorageById({ id: row.id })
-    .then(() => {
-      ElMessage({
-        message: `删除成功!`,
-        type: 'success',
-        plain: true,
-      });
-      onRefresh();
-    })
-    .catch(() => {
-      ElMessage({
-        message: `删除失败!`,
-        type: 'error',
-        plain: true,
-      });
-    })
-    .finally(() => {
-      hideLoading.close();
-    });
-}
-
-const [SupplierModel, supplierModelApi] = useVbenModal({
-  connectedComponent: SupplierList,
-  destroyOnClose: true,
-  centered: true,
-});
-
-const [DetailModel, detailModelApi] = useVbenModal({
-  connectedComponent: Detail,
-  destroyOnClose: true,
-  centered: true,
-});
-
-function openDetail() {
-  useSelectedRow(gridApi.grid.getRadioRecord())((data) =>
-    detailModelApi.setData(data).open(),
-  );
-}
-
-const [StoreFormModel, storeFormModelApi] = useVbenModal({
-  connectedComponent: StoreForm,
-  centered: true,
-});
-function openStoreForm() {
-  useSelectedRow(gridApi.grid.getRadioRecord())((data) =>
-    storeFormModelApi.setData(data).open(),
-  );
-}
-
-const [DetailPrintModel, detailPrintModelApi] = useVbenModal({
-  connectedComponent: DetailPrint,
-  destroyOnClose: true,
-  centered: true,
-});
-function openDetailPrint() {
-  useSelectedRow(gridApi.grid.getRadioRecord())((data) =>
-    detailPrintModelApi.setData(data).open(),
-  );
-}
-
-const [AuditModel, auditModelApi] = useVbenModal({
-  connectedComponent: Audit,
-  destroyOnClose: true,
-  centered: true,
-});
-
-function openAudit() {
-  const selectData = gridApi.grid.getRadioRecord();
-  useSelectedRow(selectData)((data) => {
-    if ([1, 5].includes(data.statusFlag)) {
-      ElMessage.warning('请先提交');
-      return;
-    }
-    auditModelApi.setData(data).open();
-  });
-}
-
-const [SettlementFormModel, settlementFormModelApi] = useVbenModal({
-  connectedComponent: SettlementForm,
-  destroyOnClose: true,
-  centered: true,
-});
-</script>
 <template>
-  <Page auto-content-height>
-    <FormModel @success="onRefresh" />
-    <SupplierModel
-      @select="
-        (data: SupplierApi.Supplier) => {
-          gridApi.formApi.setValues({
-            supplierId: data?.id || '',
-            supplierName: data?.fullName || '',
-          });
-        }
-      "
-    />
-    <StoreFormModel @success="onRefresh" />
-    <DetailModel />
-    <DetailPrintModel />
-    <AuditModel @success="onRefresh" />
-    <SettlementFormModel @success="onRefresh" />
-    <Grid table-title="产品入库列表" class="w-full">
-      <template #statusFlag="{ row }">
-        <ElTag :type="statusFlagMap[row.statusFlag]?.color || 'danger'">
-          {{ statusFlagMap[row.statusFlag]?.name || '未知' }}
-        </ElTag>
-      </template>
-      <template #createTime="{ row }">
-        {{ dayjs(row.createTime).format('YYYY-MM-DD') }}
-      </template>
+  <div class="app-container">
+    <div class="query-form-container">
+      <!-- 搜索表单 -->
+      <el-form
+        :model="queryParams"
+        :inline="true"
+        class="query-form"
+        label-width="80px"
+      >
+        <!-- 单号 -->
+        <el-form-item label="单号" prop="code">
+          <el-input v-model="queryParams.code" />
+        </el-form-item>
 
-      <template #unloadingId="{ row }">
-        {{ unloadingMap[row.unloadingId] || '未知' }}
-      </template>
-      <template #storeSiteName="{ row }">
-        {{ row.storeSiteName ? `#${row.storeSiteName}` : '' }}
-      </template>
-      <template #toolbar-tools>
-        <!-- <ElButton
-          type="primary"
-          @click="onSearch"
-          class="mr-2"
-          :loading="isQuerying"
-        >
-          <IconifyIcon
-            icon="material-symbols:search-rounded"
-            class="size-5"
-            style="margin-right: 4px"
+        <!-- 供应商 -->
+        <el-form-item label="供应商" prop="supplierName">
+          <el-input
+            v-model="queryParams.supplierName"
+            placeholder="请选择"
+            readonly
           />
-          查询
-        </ElButton> -->
-        <ElButtonGroup class="ml-4">
+        </el-form-item>
+
+        <!-- 到货方式 -->
+        <el-form-item label="到货方式" prop="arrivalId">
+          <el-select
+            v-model="queryParams.arrivalId"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in arrivalOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <!-- 提货车牌 -->
+        <el-form-item label="提货车牌" prop="pickUpCarId">
+          <el-select
+            v-model="queryParams.pickUpCarId"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in carOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="开单日期" prop="dateRange">
+          <el-date-picker
+            v-model="queryParams.dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="x"
+          />
+        </el-form-item>
+
+        <!-- 操作按钮 -->
+        <el-form-item>
+          <el-button type="primary" @click="handleQuery">搜索</el-button>
+          <el-button @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <div class="query-btn-container">
+      <ElButtonGroup class="ml-4">
           <ElButton
             type="primary"
-            @click="onCreate"
+            @click="handleAdd"
             v-if="rights.includes('新增')"
           >
             <IconifyIcon
@@ -380,9 +93,9 @@ const [SettlementFormModel, settlementFormModelApi] = useVbenModal({
             v-if="rights.includes('修改')"
           >
             <IconifyIcon
+              icon="ant-design:edit"
               class="size-5"
               style="margin-right: 4px"
-              icon="line-md:edit-twotone"
             />
             修改
           </ElButton>
@@ -472,62 +185,229 @@ const [SettlementFormModel, settlementFormModelApi] = useVbenModal({
             结算
           </ElButton>
         </ElButtonGroup>
-        <ElDropdown
-          split-button
-          type="primary"
-          v-if="
-            rights.includes('带价单据') ||
-            rights.includes('数量单据') ||
-            rights.includes('单一标签') ||
-            rights.includes('整单标签')
-          "
-        >
-          <IconifyIcon
-            class="size-5"
-            style="margin-right: 4px"
-            icon="material-symbols:print-outline-rounded"
-          />
-          打印
-          <template #dropdown>
-            <ElDropdownMenu>
-              <ElDropdownItem
-                @click="openDetailPrint"
-                v-if="rights.includes('带价单据')"
-              >
-                价格入库
-              </ElDropdownItem>
-              <ElDropdownItem
-                @click="openDetailPrint"
-                v-if="rights.includes('数量单据')"
-              >
-                一般入库
-              </ElDropdownItem>
-              <ElDropdownItem
-                @click="openDetailPrint"
-                v-if="rights.includes('单一标签')"
-              >
-                单一标签
-              </ElDropdownItem>
-              <ElDropdownItem
-                @click="openDetailPrint"
-                v-if="rights.includes('整单标签')"
-              >
-                整个标签
-              </ElDropdownItem>
-            </ElDropdownMenu>
+    </div>
+    <!-- 分页列表 -->
+    <div class="table-container">
+      <el-table :data="tableData" stripe style="width: 100%" @row-click="handleRowClick">
+        <el-table-column width="30" align="center">
+          <template #default="{ row }">
+            <el-radio 
+              v-model="selectedRowId" 
+              :value="row.id"
+              @click.stop
+            >&nbsp;</el-radio>
           </template>
-        </ElDropdown>
-      </template>
-    </Grid>
-  </Page>
+        </el-table-column>
+        <el-table-column type="index" width="60" label="序号" />
+        <el-table-column prop="code" label="单号" width="200" />
+        <el-table-column prop="statusFlag" label="订单状态" width="120">
+          <template #default="{ row }">
+            <ElTag :type="statusFlagMap[row.statusFlag]?.color || 'danger'">
+              {{ statusFlagMap[row.statusFlag]?.name || '未知' }}
+            </ElTag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="supplierName" label="供应商" width="200" />
+        <el-table-column prop="totalNum" label="数量" width="80" />
+        <el-table-column prop="totalMoney" label="金额" width="80">
+          <template #default="{ row }">
+            ¥{{ row.totalMoney.toFixed(2) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="printFlag" label="打印次数" width="100" />
+        <el-table-column prop="storeName" label="临时仓库" width="100" />
+        <el-table-column prop="storeSiteName" label="临时货位" width="100" />
+        <el-table-column prop="createName" label="制单员" width="100" />
+        <el-table-column prop="createTime" label="入库日期" width="100">
+          <template #default="{ row }">
+            {{ dayjs(row.createTime).format('YYYY-MM-DD') }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="approveName" label="审批人" width="100" />
+        <el-table-column prop="pickUpCarNum" label="提货车牌号" width="120" />
+        <el-table-column prop="unloadingId" label="卸货方式" width="100">
+          <template #default="{ row }">
+            {{ unloadingMap[row.unloadingId] || '未知' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" label="备注" width="200" />
+      </el-table>
+
+      <!-- 分页控件 -->
+      <div class="pagination-container">
+        <el-pagination
+          v-model:current-page="queryParams.pageNum"
+          v-model:page-size="queryParams.pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="total"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </div>
+
+    <formDialog
+      v-model:visible="formDialogVis"
+      :form-data="formData" 
+      @close="formDialogVis = false"
+      @confirm="handleFormDialogConfirm"
+    />
+  </div>
 </template>
-<style scoped lang="css">
-.el-button-group .el-button--primary:last-child {
-  border-radius: 0;
+
+<script setup lang="ts">
+import formDialog from './formDialog.vue'
+import type { CarApi } from '#/api';
+import { ElMessage } from 'element-plus'
+
+import { IconifyIcon } from '@vben/icons';
+
+import { onMounted, reactive, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+
+import dayjs from 'dayjs';
+
+import { getCarList, getInStorageList, deleteInStorageById, getInStorageCode } from '#/api';
+import { statusFlagMap, useMenuRights, unloadingMap } from '#/utils';
+
+const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
+
+// 初始化时获取数据
+onMounted(() => {
+  getList();
+  getCarOptions();
+});
+
+const formDialogVis = ref(false);
+const formData = ref({});
+
+// 添加选中行的ID
+const selectedRowId = ref('');
+const selectedRow = computed(() => {
+  return tableData.value.find((row: any) => row.id === selectedRowId.value);
+});
+
+// 添加处理行点击的函数
+const handleRowClick = (row: any) => {
+  selectedRowId.value = row.id;
+};
+
+// 搜索表单数据
+const queryParams = reactive({
+  pageNum: 1,
+  pageSize: 10,
+  supplierName: '',
+  code: '',
+  arrivalId: '',
+  pickUpCarId: '',
+  unloadingId: '',
+  remark: '',
+  supplierId: '',
+  id: '',
+  startTime: '',
+  endTime: '',
+  dateRange: [],
+});
+
+// 下拉选项数据
+const arrivalOptions = [
+  { label: '自提', value: 1 },
+  { label: '送货', value: 2 },
+  { label: '物流送货', value: 3 },
+];
+
+// 提货车牌远程数据
+const carOptions = ref<Array<{ label: string; value: number }>>([]);
+
+// 表格数据
+const tableData = ref([]);
+const total = ref(0);
+
+// 搜索按钮点击事件
+const handleQuery = () => {
+  queryParams.pageNum = 1;
+  getList();
+};
+
+// 重置按钮点击事件
+const handleReset = () => {
+  // 重置表单
+  Object.keys(queryParams).forEach((key) => {
+    queryParams[key] = '';
+  });
+  queryParams.dateRange = [];
+  queryParams.pageNum = 1;
+  queryParams.pageSize = 10;
+  getList();
+};
+
+const getCarOptions = async () => {
+  const res = await getCarList();
+  carOptions.value = res.data.map((item: CarApi.Car) => ({
+    label: item.carNum || '',
+    value: item.id,
+  }));
+};
+
+// 获取表格数据
+const getList = async () => {
+  const p = JSON.parse(JSON.stringify(queryParams));
+  if (p.dateRange) {
+    p.startTime = p.dateRange[0];
+    p.endTime = p.dateRange[1];
+  } else {
+    p.startTime = '';
+    p.endTime = '';
+  }
+  Reflect.deleteProperty(p, 'dateRange');
+  
+  const res = await getInStorageList(p);
+  tableData.value = res.data;
+  total.value = res.total;
+};
+
+// 分页事件处理
+const handleSizeChange = (val: number) => {
+  queryParams.pageSize = val;
+  getList();
+};
+
+const handleCurrentChange = (val: number) => {
+  queryParams.pageNum = val;
+  getList();
+};
+
+const handleAdd = () => {
+  getInStorageCode().then(({ data }: { data: string }) => {
+    formData.value = {code: data}
+    formDialogVis.value = true;
+  });
 }
 
-:deep(.el-dropdown .el-button-group .el-button--primary:first-child) {
-  border-left: var(--el-button-divide-border-color) 1px solid;
-  border-radius: 0;
+function editSelectRow() {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  if (![1, 5].includes(selectedRow.value.statusFlag)) {
+    ElMessage({
+      message: `只能修改草稿状态的入库单!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  formData.value = selectedRow.value
+  formDialogVis.value = true;
 }
-</style>
+
+const handleFormDialogConfirm = () => {
+  formDialogVis.value = false;
+  getList();
+}
+</script>

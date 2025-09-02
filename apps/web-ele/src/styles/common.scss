@@ -1,0 +1,46 @@
+$longQueryWidth: 352px;
+
+// 列表页公共样式
+.query-form-container {
+  padding: 10px 8px;
+  margin-bottom: 8px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px rgba(197, 206, 225, 0.16);
+  .el-input,
+  .el-input-number,
+  .el-select,
+  .el-cascader,
+  .el-date-editor--date {
+    // width: 180px;
+    width: 120px;
+  }
+
+  .el-date-editor--daterange,
+  .el-date-editor--datetimerange {
+    // width: 220px;
+    width: $longQueryWidth;
+  }
+
+  .combine-input {
+    width: $longQueryWidth;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    .el-input {
+      width: 165px;
+    }
+  }
+
+  .el-form-item--small.el-form-item {
+    margin: 6px 4px;
+  }
+}
+
+.query-btn-container {
+  // padding-left: 100px;
+  margin-top: 5px;
+  margin-bottom: 8px;
+}

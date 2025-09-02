@@ -1,25 +1,25 @@
 import type { Linter } from 'eslint';
 
-import {
-  command,
-  comments,
-  disableds,
-  ignores,
-  importPluginConfig,
-  javascript,
-  jsdoc,
-  jsonc,
-  node,
-  perfectionist,
-  prettier,
-  regexp,
-  test,
-  turbo,
-  typescript,
-  unicorn,
-  vue,
-} from './configs';
-import { customConfig } from './custom-config';
+// import {
+//   command,
+//   comments,
+//   disableds,
+//   ignores,
+//   importPluginConfig,
+//   javascript,
+//   jsdoc,
+//   jsonc,
+//   node,
+//   perfectionist,
+//   prettier,
+//   regexp,
+//   test,
+//   turbo,
+//   typescript,
+//   unicorn,
+//   vue,
+// } from './configs';
+// import { customConfig } from './custom-config';
 
 type FlatConfig = Linter.Config;
 
@@ -31,25 +31,25 @@ type FlatConfigPromise =
 
 async function defineConfig(config: FlatConfig[] = []) {
   const configs: FlatConfigPromise[] = [
-    vue(),
-    javascript(),
-    ignores(),
-    prettier(),
-    typescript(),
-    jsonc(),
-    disableds(),
-    importPluginConfig(),
-    node(),
-    perfectionist(),
-    comments(),
-    jsdoc(),
-    unicorn(),
-    test(),
-    regexp(),
-    command(),
-    turbo(),
-    ...customConfig,
-    ...config,
+    // vue(),
+    // javascript(),
+    // ignores(),
+    // prettier(),
+    // typescript(),
+    // jsonc(),
+    // disableds(),
+    // importPluginConfig(),
+    // node(),
+    // perfectionist(),
+    // comments(),
+    // jsdoc(),
+    // unicorn(),
+    // test(),
+    // regexp(),
+    // command(),
+    // turbo(),
+    // ...customConfig,
+    // ...config,
   ];
 
   const resolved = await Promise.all(configs);

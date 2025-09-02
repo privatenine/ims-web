@@ -4,6 +4,7 @@ import { unmountGlobalLoading } from '@vben/utils';
 import { overridesPreferences } from './preferences';
 
 import './styles/globals.css';
+import './styles/common.scss';
 /**
  * 应用初始化完成之后再进行页面加载渲染
  */
