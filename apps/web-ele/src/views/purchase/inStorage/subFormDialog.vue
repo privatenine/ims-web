@@ -228,17 +228,17 @@
       />
     </div>
 
+    <!-- <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="handleCancel">取消</el-button>
+        <el-button type="primary" @click="handleConfirm"> 确认 </el-button>
+      </div>
+    </template> -->
     <productSelectDialog
       v-model:visible="productSelectDialogVis"
       :form-data="formData"
       @close="productSelectDialogVis = false"
       @confirm="productConfirm"
-    />
-    <subFormDialog
-      v-model:visible="subformDialogVis"
-      :form-data="subformData"
-      @close="subformDialogVis = false"
-      @confirm="subConfirm"
     />
   </el-dialog>
 </template>
@@ -432,6 +432,14 @@ const handleClose = () => {
   emit('cancel');
 };
 
+const handleCancel = () => {
+  vis.value = false;
+};
+
+const handleConfirm = async () => {
+  // 确认操作
+};
+
 const productSelectDialogVis = ref(false);
 // 打开子表单
 const openSub = () => {
@@ -447,18 +455,9 @@ const openSub = () => {
   // 打开对话框
   productSelectDialogVis.value = true;
 };
-
-const subformDialogVis = ref(false);
-const subformData = ref();
 const productConfirm = (data) => {
   // 新增明细选择产品
-  subformData.value = Object.assign(data, {
-    addWarehousingMainParam: form.value,
-  });
-  subformDialogVis.value = true;
-};
-const subConfirm = () => {
-  getSubList();
+  console.log(data)
 };
 
 // 选择子表单

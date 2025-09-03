@@ -87,14 +87,6 @@
     </div>
 
     <ElButtonGroup class="ml-4">
-      <ElButton type="primary" @click="onRefresh">
-        <IconifyIcon
-          icon="material-symbols-light:search-rounded"
-          class="size-5"
-          style="margin-right: 4px"
-        />
-        查询
-      </ElButton>
       <ElButton type="primary" @click="selectSub">
         <IconifyIcon
           icon="ep:select"
@@ -357,38 +349,5 @@ const handleCurrentChange = (val: number) => {
 
 const handleClose = () => {
   emit('cancel');
-};
-
-const handleCancel = () => {
-  vis.value = false;
-};
-
-const handleConfirm = async () => {
-  // 确认操作
-};
-
-const productSelectDialogVis = ref(false);
-// 打开子表单
-const openSub = () => {
-  // 打开新增明细的逻辑
-  if (!form.value.supplierId) {
-    ElMessage({
-      message: `请选择供应商`,
-      type: 'warning',
-      plain: true,
-    });
-  }
-  // 打开对话框
-  productSelectDialogVis.value = true;
-};
-
-// 选择子表单
-const selectSubForm = () => {
-  // 修改明细的逻辑
-};
-
-// 删除操作
-const handleDelete = () => {
-  // 删除明细的逻辑
 };
 </script>
