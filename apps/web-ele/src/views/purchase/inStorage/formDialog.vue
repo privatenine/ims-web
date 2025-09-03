@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="vis" :title="title" width="1200" @close="handleClose">
+  <el-dialog
+    v-model="vis"
+    :title="title"
+    width="1200"
+    append-to-body
+    @close="handleClose"
+  >
     <el-form
       ref="formRef"
       :model="form"
@@ -263,6 +269,7 @@ import {
 import { useMenuRights } from '#/utils';
 
 import productSelectDialog from './productSelectDialog.vue';
+import subFormDialog from './subFormDialog.vue';
 
 const props = defineProps(['visible', 'formData']);
 
@@ -449,7 +456,7 @@ const openSub = () => {
 };
 
 const subformDialogVis = ref(false);
-const subformData = ref();
+const subformData = ref({});
 const productConfirm = (data) => {
   // 新增明细选择产品
   subformData.value = Object.assign(data, {

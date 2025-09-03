@@ -332,7 +332,10 @@ const selectSub = () => {
     });
     return;
   }
-  emit('confirm', selectedRow.value);
+  emit('confirm', {
+    ...selectedRow.value,
+    productName: selectedRow.value.name,
+  });
   vis.value = false;
 };
 
