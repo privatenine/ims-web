@@ -16,7 +16,12 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="供应商" prop="supplierId">
-            <el-select v-model="form.supplierId" placeholder="请选择" clearable>
+            <el-select
+              v-model="form.supplierId"
+              placeholder="请选择"
+              clearable
+              @change="handleSupplierChange"
+            >
               <el-option
                 v-for="item in supplierOptions"
                 :key="item.id"
@@ -35,7 +40,12 @@
 
         <el-col :span="8">
           <el-form-item label="到货方式" prop="arrivalId">
-            <el-select v-model="form.arrivalId" placeholder="请选择" clearable>
+            <el-select
+              v-model="form.arrivalId"
+              placeholder="请选择"
+              clearable
+              @change="handleArrivalChange"
+            >
               <el-option
                 v-for="item in arrivalOptions"
                 :key="item.value"
@@ -69,6 +79,7 @@
               v-model="form.unloadingId"
               placeholder="请选择"
               clearable
+              @change="handleUnloadingChange"
             >
               <el-option
                 v-for="item in unloadingOptions"
@@ -369,7 +380,7 @@ watch(
           statusFlag: undefined,
         };
       }
-      if (props.formData.value?.id) {
+      if (props.formData?.id) {
         getSubList();
       }
     }
@@ -476,5 +487,41 @@ const selectSubForm = () => {
 // 删除操作
 const handleDelete = () => {
   // 删除明细的逻辑
+};
+
+// 添加处理供应商选择变化的函数
+const handleSupplierChange = (val: string) => {
+  if (val) {
+    const selected = supplierOptions.value.find((item) => item.id === val);
+    if (selected) {
+      form.value.supplierName = selected.fullName;
+    }
+  } else {
+    form.value.supplierName = '';
+  }
+};
+
+// 添加处理到货方式选择变化的函数
+const handleArrivalChange = (val: number) => {
+  if (val) {
+    const selected = arrivalOptions.find((item) => item.value === val);
+    if (selected) {
+      form.value.arrivalName = selected.label;
+    }
+  } else {
+    form.value.arrivalName = '';
+  }
+};
+
+// 添加处理卸货方式选择变化的函数
+const handleUnloadingChange = (val: number) => {
+  if (val) {
+    const selected = unloadingOptions.find((item) => item.value === val);
+    if (selected) {
+      form.value.unloadingName = selected.label;
+    }
+  } else {
+    form.value.unloadingName = '';
+  }
 };
 </script>

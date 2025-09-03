@@ -48,12 +48,13 @@
               placeholder="请选择产地"
               clearable
               style="width: 100%"
+              @change="handleProductPlaceChange"
             >
               <el-option
                 v-for="item in productPlaceOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
@@ -72,6 +73,7 @@
                 multiple: true,
                 emitPath: false,
               }"
+              :options="attOptions"
               style="width: 100%"
             />
           </el-form-item>
@@ -93,6 +95,7 @@
               placeholder="请选择仓库"
               clearable
               style="width: 100%"
+              @change="handleStoreChange"
             >
               <el-option
                 v-for="item in storeOptions"
@@ -148,11 +151,10 @@ import { ElMessage } from 'element-plus';
 import {
   createInStorageSub,
   getAttList,
-  getInStorageStoreBy,
+  // getInStorageStoreBy,
   getVehiclePlaceList,
   updateInStorageSub,
 } from '#/api';
-
 import { getStorageOptions } from '#/utils/storage';
 
 const props = defineProps(['visible', 'formData']);
@@ -164,25 +166,16 @@ const formRef = ref<FormInstance>();
 
 // 表单数据
 const form = ref({
-  supplierId: '',
-  supplierName: '',
-  code: '',
-  arrivalId: undefined,
-  pickUpCarId: undefined,
-  unloadingId: undefined,
-  totalMoney: 0,
-  totalNum: 0,
-  remark: '',
   id: '',
-  statusFlag: undefined,
-  // 新增字段
   actiNum: 0,
   price: 0,
   priceReference: 0,
   productPlaceId: '',
+  productPlaceName: '', // 新增产地名称字段
   productAttListTemp: [],
   printLabel: 0,
   storeId: '',
+  storeName: '', // 新增仓库名称字段
   siteName: '',
   isDefault: false,
 });
@@ -195,12 +188,21 @@ const rules = ref<FormRules>({
 });
 
 // 产地选项
-const productPlaceOptions = ref<Array<{ label: string; value: any }>>([]);
+const productPlaceOptions = ref([]);
 // 仓库选项
-const storeOptions = ref<Array<{ label: string; value: any }>>([]);
+const storeOptions = ref([]);
+const attOptions = ref([]);
 
 // 初始化数据
-onMounted(() => {});
+onMounted(async () => {
+  storeOptions.value = getStorageOptions();
+
+  const res = await getVehiclePlaceList();
+  productPlaceOptions.value = res.data;
+
+  const res2 = await getAttList();
+  attOptions.value = res2.data;
+});
 
 // 同步外部visible属性到内部vis
 watch(
@@ -209,26 +211,13 @@ watch(
     vis.value = newVal;
     if (newVal) {
       // 当对话框打开时，初始化表单数据
-      storeOptions.value = getStorageOptions()
-      
       if (props.formData) {
         form.value = { ...props.formData };
       } else {
         // 重置表单
         formRef.value?.resetFields();
         form.value = {
-          supplierId: '',
-          supplierName: '',
-          code: '',
-          arrivalId: undefined,
-          pickUpCarId: undefined,
-          unloadingId: undefined,
-          totalMoney: 0,
-          totalNum: 0,
-          remark: '',
           id: '',
-          statusFlag: undefined,
-          // 重置新增字段
           actiNum: 0,
           price: 0,
           priceReference: 0,
@@ -253,12 +242,12 @@ watch(vis, (newVal) => {
 });
 
 const title = computed(() => {
-  return `${props.formData.value?.id ? '修改' : '新增'}明细-${props.formData.value?.productName || '无'}`;
+  return `${form.value?.id ? '修改' : '新增'}明细-${form.value?.productName || '无'}`;
 });
 
 // 数量变化处理函数
 const handleActiNumChange = (value: number) => {
-  // form.value.printLabel = value;
+  form.value.printLabel = value;
 };
 
 // 单价变化处理函数
@@ -271,19 +260,71 @@ const handleCancel = () => {
   vis.value = false;
 };
 
+// 监听产地选择变化
+const handleProductPlaceChange = (value: string) => {
+  const selected = productPlaceOptions.value.find(
+    (item: any) => item.id === value,
+  );
+  form.value.productPlaceName = selected ? selected.name : '';
+};
+
+// 监听仓库选择变化
+const handleStoreChange = (value: string) => {
+  const selected = storeOptions.value.find((item: any) => item.value === value);
+  form.value.storeName = selected ? selected.label : '';
+};
+
+function findCategoryById(id: number, categories: any[]): any {
+  for (const category of categories) {
+    if (category.id === id) {
+      return category;
+    }
+    if (category.childList && category.childList.length > 0) {
+      const found = findCategoryById(id, category.childList);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+function handleFormData() {
+  // 在提交前确保获取最新的label值
+  handleProductPlaceChange(form.value.productPlaceId);
+  handleStoreChange(form.value.storeId);
+  // 处理状态
+  form.value.addWarehousingMainParam.statusFlag =
+    form.value.addWarehousingMainParam.statusFlag || 1;
+  // 处理附件数据
+  form.value.productAttList = [];
+  if (form.value.productAttListTemp?.length > 0) {
+    form.value.productAttListTemp.forEach((id: number) => {
+      const category = findCategoryById(id, attOptions.value);
+      if (category) {
+        form.value.productAttList.push({
+          id: category.id,
+          name: category.name,
+        });
+      }
+    });
+  }
+}
+
+// 修改handleConfirm函数
 const handleConfirm = async () => {
   const valid = await formRef.value?.validate();
   if (!valid) {
     return;
   }
-  (tableData.value.length === 0
-    ? createInStorageSub(Object.assign({}, form.value, { statusFlag }))
-    : updateInStorageSub(
-        Object.assign({}, form.value, { statusFlag, id: form.value.id }),
-      )
+
+  handleFormData();
+
+  (form.value.id
+    ? updateInStorageSub(form.value)
+    : createInStorageSub(form.value)
   ).then(() => {
     ElMessage({
-      message: `提交成功`,
+      message: `添加明细成功`,
       type: 'success',
       plain: true,
     });
