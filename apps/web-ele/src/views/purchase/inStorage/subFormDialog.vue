@@ -289,6 +289,8 @@ function findCategoryById(id: number, categories: any[]): any {
   return null;
 }
 function handleFormData() {
+  // 当入库和明细都是新增时，新增明细传id:0,接口返回时会同时创建明细和入库id
+  form.value.id = form.value.id || 0;
   // 在提交前确保获取最新的label值
   handleProductPlaceChange(form.value.productPlaceId);
   handleStoreChange(form.value.storeId);
@@ -322,13 +324,13 @@ const handleConfirm = async () => {
   (form.value.id
     ? updateInStorageSub(form.value)
     : createInStorageSub(form.value)
-  ).then(() => {
+  ).then((res) => {
     ElMessage({
       message: `添加明细成功`,
       type: 'success',
       plain: true,
     });
-    emit('confirm', form.value);
+    emit('confirm', res.data);
     vis.value = false;
   });
 };

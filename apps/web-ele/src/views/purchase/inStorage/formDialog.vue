@@ -393,7 +393,7 @@ watch(vis, (newVal) => {
 });
 
 const title = computed(() => {
-  return `${form.value?.id ? '修改' : '新增'}入库`;
+  return `${props.formData.value?.id ? '修改' : '新增'}入库`;
 });
 
 async function save(statusFlag: number) {
@@ -475,8 +475,10 @@ const productConfirm = (data) => {
   });
   subformDialogVis.value = true;
 };
-const subConfirm = () => {
+const subConfirm = (data) => {
   getSubList();
+  // 当入库和明细都是新增时，新增明细传id:0,接口返回时会同时创建明细和入库id
+  form.value.id = form.value.id || data.warehousingId;
 };
 
 // 选择子表单
