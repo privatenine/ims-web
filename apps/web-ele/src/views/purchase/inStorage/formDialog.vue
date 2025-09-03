@@ -215,20 +215,37 @@
       <el-table-column prop="printLabel" label="商标" width="80" />
       <el-table-column prop="remark" label="备注" width="80" />
     </el-table>
+    <!-- 分页控件 -->
+    <div class="pagination-container">
+      <el-pagination
+        v-model:current-page="queryParams.pageNum"
+        v-model:page-size="queryParams.pageSize"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
 
-    <template #footer>
+    <!-- <template #footer>
       <div class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
         <el-button type="primary" @click="handleConfirm"> 确认 </el-button>
       </div>
-    </template>
+    </template> -->
+    <productSelectDialog
+      v-model:visible="productSelectDialogVis"
+      :form-data="formData"
+      @close="productSelectDialogVis = false"
+    />
   </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import type { FormInstance, FormRules } from 'element-plus';
 
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { IconifyIcon } from '@vben/icons';
@@ -244,6 +261,8 @@ import {
 } from '#/api';
 import { useMenuRights } from '#/utils';
 
+import productSelectDialog from './productSelectDialog.vue';
+
 const props = defineProps(['visible', 'formData']);
 
 const emit = defineEmits(['update:visible', 'confirm', 'cancel']);
@@ -253,6 +272,12 @@ const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
 const vis = ref(false);
 const formRef = ref<FormInstance>();
 const tableRef = ref();
+
+const queryParams = reactive({
+  pageNum: 1,
+  pageSize: 10,
+});
+const total = ref(0);
 
 // 表单数据
 const form = ref({
@@ -386,10 +411,20 @@ const handleRowClick = (row: any) => {
   selectedRowId.value = row.id;
 };
 const getSubList = async () => {
-  const res = await getInStorageSubByMainId({
-    warehousingId: form.value.id,
-  });
+  const p = Object.assign({}, queryParams, { warehousingId: form.value.id });
+  const res = await getInStorageSubByMainId(p);
   tableData.value = res.data;
+  total.value = res.total;
+};
+// 分页事件处理
+const handleSizeChange = (val: number) => {
+  queryParams.pageSize = val;
+  getSubList();
+};
+
+const handleCurrentChange = (val: number) => {
+  queryParams.pageNum = val;
+  getSubList();
 };
 
 const handleClose = () => {
@@ -404,6 +439,7 @@ const handleConfirm = async () => {
   // 确认操作
 };
 
+const productSelectDialogVis = ref(false);
 // 打开子表单
 const openSub = () => {
   // 打开新增明细的逻辑
@@ -413,8 +449,10 @@ const openSub = () => {
       type: 'warning',
       plain: true,
     });
+    return;
   }
   // 打开对话框
+  productSelectDialogVis.value = true;
 };
 
 // 选择子表单
