@@ -363,6 +363,8 @@ watch(
       // 当对话框打开时，初始化表单数据
       if (props.formData) {
         form.value = { ...props.formData };
+        form.value.totalMoney = form.value.totalMoney || 0;
+        form.value.totalNum = form.value.totalNum || 0;
       } else {
         // 重置表单
         formRef.value?.resetFields();
@@ -476,9 +478,9 @@ const productConfirm = (data) => {
   subformDialogVis.value = true;
 };
 const subConfirm = (data) => {
-  getSubList();
   // 当入库和明细都是新增时，新增明细传id:0,接口返回时会同时创建明细和入库id
   form.value.id = form.value.id || data.warehousingId;
+  getSubList();
 };
 
 // 选择子表单

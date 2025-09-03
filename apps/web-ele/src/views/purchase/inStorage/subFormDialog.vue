@@ -265,13 +265,13 @@ const handleProductPlaceChange = (value: string) => {
   const selected = productPlaceOptions.value.find(
     (item: any) => item.id === value,
   );
-  form.value.productPlaceName = selected ? selected.name : '';
+  form.value.productPlaceName = selected ? selected.name : undefined;
 };
 
 // 监听仓库选择变化
 const handleStoreChange = (value: string) => {
   const selected = storeOptions.value.find((item: any) => item.value === value);
-  form.value.storeName = selected ? selected.label : '';
+  form.value.storeName = selected ? selected.label : undefined;
 };
 
 function findCategoryById(id: number, categories: any[]): any {
@@ -289,8 +289,12 @@ function findCategoryById(id: number, categories: any[]): any {
   return null;
 }
 function handleFormData() {
+  // 根据接口文档处理数据
+  form.value.code = form.value.addWarehousingMainParam.code;
+  form.value.supplierId = form.value.addWarehousingMainParam.supplierId;
+  form.value.supplierName = form.value.addWarehousingMainParam.supplierName;
   // 当入库和明细都是新增时，新增明细传id:0,接口返回时会同时创建明细和入库id
-  form.value.id = form.value.id || 0;
+  // form.value.id = form.value.id || 0;
   // 在提交前确保获取最新的label值
   handleProductPlaceChange(form.value.productPlaceId);
   handleStoreChange(form.value.storeId);
