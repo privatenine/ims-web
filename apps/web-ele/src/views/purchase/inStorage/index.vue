@@ -75,127 +75,130 @@
 
     <div class="query-btn-container">
       <ElButtonGroup class="ml-4">
-          <ElButton
-            type="primary"
-            @click="handleAdd"
-            v-if="rights.includes('新增')"
-          >
-            <IconifyIcon
-              icon="ant-design:plus-outlined"
-              class="size-5"
-              style="margin-right: 4px"
-            />
-            新增
-          </ElButton>
-          <ElButton
-            type="primary"
-            @click="editSelectRow"
-            v-if="rights.includes('修改')"
-          >
-            <IconifyIcon
-              icon="ant-design:edit"
-              class="size-5"
-              style="margin-right: 4px"
-            />
-            修改
-          </ElButton>
-          <ElButton type="primary" disabled>
-            <IconifyIcon
-              class="size-5"
-              style="margin-right: 4px"
-              icon="material-symbols:download-rounded"
-            />
-            下载数据
-          </ElButton>
-          <ElButton
-            type="primary"
-            @click="openDetail"
-            v-if="rights.includes('详情')"
-          >
-            <IconifyIcon
-              class="size-5"
-              style="margin-right: 4px"
-              icon="fluent:apps-list-detail-20-regular"
-            />
-            详情
-          </ElButton>
-          <ElButton
-            type="primary"
-            @click="openAudit"
-            v-if="rights.includes('审核')"
-          >
-            <IconifyIcon
-              icon="icon-park-outline:audit"
-              class="size-5"
-              style="margin-right: 4px"
-            />
-            审核
-          </ElButton>
-          <ElButton type="primary" disabled v-if="rights.includes('订单查询')">
-            <IconifyIcon
-              icon="material-symbols:search-rounded"
-              class="size-5"
-              style="margin-right: 4px"
-            />
-            订单查询
-          </ElButton>
-          <ElButton
-            type="primary"
-            @click="openStoreForm"
-            v-if="rights.includes('改货位')"
-          >
-            <IconifyIcon
-              icon="line-md:edit-twotone"
-              class="size-5"
-              style="margin-right: 4px"
-            />
-            改货位
-          </ElButton>
-          <ElButton
-            type="primary"
-            @click="deleteSelectRow"
-            v-if="rights.includes('删除')"
-          >
-            <IconifyIcon
-              class="size-5"
-              style="margin-right: 4px"
-              icon="mdi:trash-can-outline"
-            />
-            删除
-          </ElButton>
-          <ElButton
-            type="primary"
-            @click="
-              () =>
-                useSelectedRow(gridApi.grid.getRadioRecord())((data) => {
-                  if (3 !== data.statusFlag) {
-                    ElMessage.warning('只有完成入库才可以结算');
-                    return;
-                  }
-                  settlementFormModelApi.setData(data).open();
-                })
-            "
-            v-if="rights.includes('付款')"
-          >
-            <IconifyIcon
-              class="size-5"
-              style="margin-right: 4px"
-              icon="fluent:select-all-on-20-regular"
-            />
-            结算
-          </ElButton>
-        </ElButtonGroup>
+        <ElButton
+          type="primary"
+          @click="handleAdd"
+          v-if="rights.includes('新增')"
+        >
+          <IconifyIcon
+            icon="ant-design:plus-outlined"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          新增
+        </ElButton>
+        <ElButton
+          type="primary"
+          @click="editSelectRow"
+          v-if="rights.includes('修改')"
+        >
+          <IconifyIcon
+            icon="ant-design:edit"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          修改
+        </ElButton>
+        <ElButton type="primary" disabled>
+          <IconifyIcon
+            class="size-5"
+            style="margin-right: 4px"
+            icon="material-symbols:download-rounded"
+          />
+          下载数据
+        </ElButton>
+        <ElButton
+          type="primary"
+          @click="openDetail"
+          v-if="rights.includes('详情')"
+        >
+          <IconifyIcon
+            class="size-5"
+            style="margin-right: 4px"
+            icon="fluent:apps-list-detail-20-regular"
+          />
+          详情
+        </ElButton>
+        <ElButton
+          type="primary"
+          @click="openAudit"
+          v-if="rights.includes('审核')"
+        >
+          <IconifyIcon
+            icon="icon-park-outline:audit"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          审核
+        </ElButton>
+        <ElButton type="primary" disabled v-if="rights.includes('订单查询')">
+          <IconifyIcon
+            icon="material-symbols:search-rounded"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          订单查询
+        </ElButton>
+        <ElButton
+          type="primary"
+          @click="openStoreForm"
+          v-if="rights.includes('改货位')"
+        >
+          <IconifyIcon
+            icon="line-md:edit-twotone"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          改货位
+        </ElButton>
+        <ElButton
+          type="primary"
+          @click="deleteSelectRow"
+          v-if="rights.includes('删除')"
+        >
+          <IconifyIcon
+            class="size-5"
+            style="margin-right: 4px"
+            icon="mdi:trash-can-outline"
+          />
+          删除
+        </ElButton>
+        <ElButton
+          type="primary"
+          @click="
+            () =>
+              useSelectedRow(gridApi.grid.getRadioRecord())((data) => {
+                if (3 !== data.statusFlag) {
+                  ElMessage.warning('只有完成入库才可以结算');
+                  return;
+                }
+                settlementFormModelApi.setData(data).open();
+              })
+          "
+          v-if="rights.includes('付款')"
+        >
+          <IconifyIcon
+            class="size-5"
+            style="margin-right: 4px"
+            icon="fluent:select-all-on-20-regular"
+          />
+          结算
+        </ElButton>
+      </ElButtonGroup>
     </div>
     <!-- 分页列表 -->
     <div class="table-container">
-      <el-table :data="tableData" stripe style="width: 100%" @row-click="handleRowClick">
+      <el-table
+        :data="tableData"
+        stripe
+        style="width: 100%"
+        @row-click="handleRowClick"
+      >
         <el-table-column width="30" align="center">
           <template #default="{ row }">
-            <el-radio 
-              v-model="selectedRowId" 
-              :value="row.id"
-              @click.stop
-            >&nbsp;</el-radio>
+            <el-radio v-model="selectedRowId" :value="row.id" @click.stop>
+              &nbsp;
+            </el-radio>
           </template>
         </el-table-column>
         <el-table-column type="index" width="60" label="序号" />
@@ -249,7 +252,7 @@
 
     <formDialog
       v-model:visible="formDialogVis"
-      :form-data="formData" 
+      :form-data="formData"
       @close="formDialogVis = false"
       @confirm="handleFormDialogConfirm"
     />
@@ -257,19 +260,20 @@
 </template>
 
 <script setup lang="ts">
-import formDialog from './formDialog.vue'
 import type { CarApi } from '#/api';
-import { ElMessage } from 'element-plus'
+
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { IconifyIcon } from '@vben/icons';
 
-import { onMounted, reactive, ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-
 import dayjs from 'dayjs';
+import { ElMessage } from 'element-plus';
 
-import { getCarList, getInStorageList, deleteInStorageById, getInStorageCode } from '#/api';
-import { statusFlagMap, useMenuRights, unloadingMap } from '#/utils';
+import { getCarList, getInStorageCode, getInStorageList } from '#/api';
+import { statusFlagMap, unloadingMap, useMenuRights } from '#/utils';
+
+import formDialog from './formDialog.vue';
 
 const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
 
@@ -361,7 +365,7 @@ const getList = async () => {
     p.endTime = '';
   }
   Reflect.deleteProperty(p, 'dateRange');
-  
+
   const res = await getInStorageList(p);
   tableData.value = res.data;
   total.value = res.total;
@@ -380,10 +384,10 @@ const handleCurrentChange = (val: number) => {
 
 const handleAdd = () => {
   getInStorageCode().then(({ data }: { data: string }) => {
-    formData.value = {code: data}
+    formData.value = { code: data };
     formDialogVis.value = true;
   });
-}
+};
 
 function editSelectRow() {
   if (!selectedRow.value?.id) {
@@ -402,12 +406,12 @@ function editSelectRow() {
     });
     return;
   }
-  formData.value = selectedRow.value
+  formData.value = selectedRow.value;
   formDialogVis.value = true;
 }
 
 const handleFormDialogConfirm = () => {
   formDialogVis.value = false;
   getList();
-}
+};
 </script>
