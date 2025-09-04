@@ -175,6 +175,61 @@
           />
           结算
         </ElButton>
+        <ElDropdown
+          type="primary"
+          v-if="
+            rights.includes('带价单据') ||
+            rights.includes('数量单据') ||
+            rights.includes('单一标签') ||
+            rights.includes('整单标签')
+          "
+        >
+          <ElButton
+            type="primary"
+            @click="openDetailPrint"
+            v-if="rights.includes('付款')"
+          >
+            <IconifyIcon
+              class="size-5"
+              style="margin-right: 4px"
+              icon="fluent:select-all-on-20-regular"
+            />
+            打印
+            <IconifyIcon
+              class="size-5"
+              style="margin-left: 4px"
+              icon="mdi:chevron-down"
+            />
+          </ElButton>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <ElDropdownItem
+                @click="openDetailPrint"
+                v-if="rights.includes('带价单据')"
+              >
+                价格入库
+              </ElDropdownItem>
+              <ElDropdownItem
+                @click="openDetailPrint"
+                v-if="rights.includes('数量单据')"
+              >
+                一般入库
+              </ElDropdownItem>
+              <ElDropdownItem
+                @click="openDetailPrint"
+                v-if="rights.includes('单一标签')"
+              >
+                单一标签
+              </ElDropdownItem>
+              <ElDropdownItem
+                @click="openDetailPrint"
+                v-if="rights.includes('整单标签')"
+              >
+                整个标签
+              </ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
       </ElButtonGroup>
     </div>
     <!-- 分页列表 -->
@@ -249,6 +304,7 @@
     />
 
     <DetailModel />
+    <DetailPrintModel />
     <approveModel @success="handleQuery" />
     <StoreFormModel @success="handleQuery" />
     <SettlementFormModel @success="handleQuery" />
@@ -277,7 +333,7 @@ import { statusFlagMap, unloadingMap, useMenuRights } from '#/utils';
 
 import approveDialog from './approveDialog.vue';
 import Detail from './detail.vue';
-// import DetailPrint from './modules/detailPrint.vue';
+import DetailPrintDialog from './detailPrintDialog.vue';
 import formDialog from './formDialog.vue';
 import SettlementFormDialog from './settlementFormDialog.vue';
 import StoreFormDialog from './storeFormDialog.vue';
@@ -483,6 +539,23 @@ function handleSettlement() {
     return;
   }
   settlementFormModelApi.setData(selectedRow.value).open();
+}
+
+const [DetailPrintModel, detailPrintModelApi] = useVbenModal({
+  connectedComponent: DetailPrintDialog,
+  destroyOnClose: true,
+  centered: true,
+});
+function openDetailPrint() {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  detailPrintModelApi.setData(selectedRow.value).open();
 }
 
 const handleDelete = () => {
