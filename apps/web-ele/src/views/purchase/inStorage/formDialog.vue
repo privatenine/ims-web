@@ -515,17 +515,15 @@ const handleDelete = () => {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     type: 'warning',
-  })
-    .then(() => {
-      deleteInStorageSubById({ id: selectedRowId.value }).then((res) => {
-        ElMessage({
-          message: `删除成功`,
-          type: 'success',
-        });
-        getSubList();
+  }).then(() => {
+    deleteInStorageSubById({ id: selectedRowId.value }).then((res) => {
+      ElMessage({
+        message: `删除成功`,
+        type: 'success',
       });
-    })
-    .catch(() => {});
+      getSubList();
+    });
+  }).catch(() => {});
 };
 
 // 添加处理供应商选择变化的函数

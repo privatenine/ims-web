@@ -40,6 +40,7 @@ export const statusFlagMap: NameColorMapType = {
   2: { name: '待审批', color: 'primary' },
   3: { name: '已完成', color: 'success' },
   4: { name: '驳回', color: 'danger' },
+  5: { name: '驳回', color: 'danger' },
 };
 
 export const payableSubStatusFlagMap: NameColorMapType = {

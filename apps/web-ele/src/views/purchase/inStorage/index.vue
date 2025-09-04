@@ -121,7 +121,7 @@
         </ElButton>
         <ElButton
           type="primary"
-          @click="openAudit"
+          @click="handleApprove"
           v-if="rights.includes('审核')"
         >
           <IconifyIcon
@@ -153,7 +153,7 @@
         </ElButton>
         <ElButton
           type="primary"
-          @click="deleteSelectRow"
+          @click="handleDelete"
           v-if="rights.includes('删除')"
         >
           <IconifyIcon
@@ -165,16 +165,7 @@
         </ElButton>
         <ElButton
           type="primary"
-          @click="
-            () =>
-              useSelectedRow(gridApi.grid.getRadioRecord())((data) => {
-                if (3 !== data.statusFlag) {
-                  ElMessage.warning('只有完成入库才可以结算');
-                  return;
-                }
-                settlementFormModelApi.setData(data).open();
-              })
-          "
+          @click="handleSettlement"
           v-if="rights.includes('付款')"
         >
           <IconifyIcon
@@ -256,6 +247,11 @@
       @close="formDialogVis = false"
       @confirm="handleFormDialogConfirm"
     />
+
+    <DetailModel />
+    <approveModel @success="handleQuery" />
+    <StoreFormModel @success="handleQuery" />
+    <SettlementFormModel @success="handleQuery" />
   </div>
 </template>
 
@@ -265,15 +261,26 @@ import type { CarApi } from '#/api';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { useVbenModal } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
 import dayjs from 'dayjs';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
-import { getCarList, getInStorageCode, getInStorageList } from '#/api';
+import {
+  deleteInStorageById,
+  getCarList,
+  getInStorageCode,
+  getInStorageList,
+} from '#/api';
 import { statusFlagMap, unloadingMap, useMenuRights } from '#/utils';
 
+import approveDialog from './approveDialog.vue';
+import Detail from './detail.vue';
+// import DetailPrint from './modules/detailPrint.vue';
 import formDialog from './formDialog.vue';
+import SettlementFormDialog from './settlementFormDialog.vue';
+import StoreFormDialog from './storeFormDialog.vue';
 
 const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
 
@@ -371,17 +378,6 @@ const getList = async () => {
   total.value = res.total;
 };
 
-// 分页事件处理
-const handleSizeChange = (val: number) => {
-  queryParams.pageSize = val;
-  getList();
-};
-
-const handleCurrentChange = (val: number) => {
-  queryParams.pageNum = val;
-  getList();
-};
-
 const handleAdd = () => {
   getInStorageCode().then(({ data }: { data: string }) => {
     formData.value = { code: data };
@@ -410,8 +406,132 @@ function editSelectRow() {
   formDialogVis.value = true;
 }
 
+const [approveModel, approveModelApi] = useVbenModal({
+  connectedComponent: approveDialog,
+  destroyOnClose: true,
+  centered: true,
+});
+function handleApprove() {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  if (![2].includes(selectedRow.value.statusFlag)) {
+    ElMessage({
+      message: `请选择待审批状态的入库单!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  approveModelApi.setData(selectedRow.value).open();
+}
+
+const [DetailModel, detailModelApi] = useVbenModal({
+  connectedComponent: Detail,
+  destroyOnClose: true,
+  centered: true,
+});
+function openDetail() {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  detailModelApi.setData(selectedRow.value).open();
+}
+
+const [StoreFormModel, storeFormModelApi] = useVbenModal({
+  connectedComponent: StoreFormDialog,
+  centered: true,
+});
+function openStoreForm() {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  storeFormModelApi.setData(selectedRow.value).open();
+}
+
+const [SettlementFormModel, settlementFormModelApi] = useVbenModal({
+  connectedComponent: SettlementFormDialog,
+  destroyOnClose: true,
+  centered: true,
+});
+function handleSettlement() {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  if (selectedRow.value.statusFlag !== 3) {
+    ElMessage.warning('只有完成入库才可以结算');
+    return;
+  }
+  settlementFormModelApi.setData(selectedRow.value).open();
+}
+
+const handleDelete = () => {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  ElMessageBox.confirm('确认要删除该数据吗?', '警告', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      deleteInStorageById({ id: selectedRow.value.id })
+        .then(() => {
+          ElMessage({
+            message: `删除成功!`,
+            type: 'success',
+            plain: true,
+          });
+          handleQuery();
+        })
+        .catch(() => {
+          ElMessage({
+            message: `删除失败!`,
+            type: 'error',
+            plain: true,
+          });
+        })
+        .finally(() => {});
+    })
+    .catch(() => {});
+};
 const handleFormDialogConfirm = () => {
   formDialogVis.value = false;
+  getList();
+};
+// 分页事件处理
+const handleSizeChange = (val: number) => {
+  queryParams.pageSize = val;
+  getList();
+};
+
+const handleCurrentChange = (val: number) => {
+  queryParams.pageNum = val;
   getList();
 };
 </script>
