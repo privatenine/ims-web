@@ -1,8 +1,5 @@
 import { createApp, watchEffect } from 'vue';
 
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-
 import { registerAccessDirective } from '@vben/access';
 import { registerLoadingDirective } from '@vben/common-ui';
 import { preferences } from '@vben/preferences';
@@ -11,7 +8,7 @@ import '@vben/styles';
 import '@vben/styles/ele';
 
 import { useTitle } from '@vueuse/core';
-import { ElLoading } from 'element-plus';
+import ElementPlus, { ElLoading } from 'element-plus';
 import print from 'vue3-print-nb';
 
 import { $t, setupI18n } from '#/locales';
@@ -19,7 +16,10 @@ import { $t, setupI18n } from '#/locales';
 import { initComponentAdapter } from './adapter/component';
 import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
+import { setupDirectives } from './directives';
 import { router } from './router';
+
+import 'element-plus/dist/index.css';
 
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
@@ -38,8 +38,8 @@ async function bootstrap(namespace: string) {
   // });
   const app = createApp(App);
 
-  app.use(ElementPlus)
-  
+  app.use(ElementPlus);
+
   // 注册Element Plus提供的v-loading指令
   app.directive('loading', ElLoading.directive);
 
@@ -79,6 +79,8 @@ async function bootstrap(namespace: string) {
     }
   });
   app.use(print);
+  // 注册全局指令
+  setupDirectives(app);
   app.mount('#app');
 }
 

@@ -239,6 +239,7 @@
         stripe
         style="width: 100%"
         @row-click="handleRowClick"
+        v-auto-fit-height
       >
         <el-table-column width="30" align="center">
           <template #default="{ row }">
@@ -281,19 +282,18 @@
         </el-table-column>
         <el-table-column prop="remark" label="备注" width="200" />
       </el-table>
-
-      <!-- 分页控件 -->
-      <div class="pagination-container">
-        <el-pagination
-          v-model:current-page="queryParams.pageNum"
-          v-model:page-size="queryParams.pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+    </div>
+    <!-- 分页控件 -->
+    <div class="pagination-container">
+      <el-pagination
+        v-model:current-page="queryParams.pageNum"
+        v-model:page-size="queryParams.pageSize"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
     </div>
 
     <formDialog
@@ -608,3 +608,31 @@ const handleCurrentChange = (val: number) => {
   getList();
 };
 </script>
+
+<style scoped>
+/* .app-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
+
+.query-form-container {
+  flex-shrink: 0;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.query-btn-container {
+  flex-shrink: 0;
+  padding: 10px;
+  background-color: #fff;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.table-container {
+  flex: 1;
+  overflow: auto;
+  margin-top: 10px;
+  background-color: #fff;
+} */
+</style>

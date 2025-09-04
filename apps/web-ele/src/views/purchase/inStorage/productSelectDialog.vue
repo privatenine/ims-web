@@ -109,6 +109,7 @@
     <el-table
       :data="tableData"
       ref="tableRef"
+      max-height="500"
       stripe
       @row-click="handleRowClick"
       style="width: 100%; margin-top: 20px"
