@@ -45,6 +45,8 @@ const vAutoFitHeight: Directive = {
         if (tableBody) {
           tableBody.style.maxHeight = `${availableHeight - (tableHeader?.clientHeight || 0)}px`;
           tableBody.style.overflowY = 'auto';
+          // 设置底部padding为tableHeader的高度
+          tableBody.style.paddingBottom = `40px`;
         }
       };
 
