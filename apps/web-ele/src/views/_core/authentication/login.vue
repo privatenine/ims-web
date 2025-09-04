@@ -49,7 +49,7 @@ const formSchema = computed((): VbenFormSchema[] => {
       componentProps: {
         placeholder: $t('authentication.usernameTip'),
       },
-      defaultValue: '13971115106', // vben
+      defaultValue: '178888888', // vben
       // dependencies: {
       //   trigger(values, form) {
       //     if (values.selectAccount) {
