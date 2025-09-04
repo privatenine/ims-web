@@ -213,6 +213,11 @@ watch(
       // 当对话框打开时，初始化表单数据
       if (props.formData) {
         form.value = { ...props.formData };
+        if (form.value.productAttachmentIds?.length > 0) {
+          form.value.productAttListTemp = form.value.productAttachmentIds.split('_').map((item) => {
+            return Number(item);
+          });
+        }
       } else {
         // 重置表单
         formRef.value?.resetFields();

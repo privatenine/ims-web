@@ -177,7 +177,7 @@
       </ElButton>
       <ElButton
         type="primary"
-        @click="selectSubForm"
+        @click="handleEdit"
         v-if="rights.includes('修改明细')"
       >
         <IconifyIcon
@@ -208,7 +208,7 @@
       @row-click="handleRowClick"
       style="width: 100%; margin-top: 20px"
     >
-      <el-table-column align="center" type="radio" width="40">
+      <el-table-column align="center" width="30">
         <template #default="scope">
           <el-radio v-model="selectedRowId" :value="scope.row.id" @click.stop>
             &nbsp;
@@ -268,10 +268,11 @@ import { useRouter } from 'vue-router';
 
 import { IconifyIcon } from '@vben/icons';
 
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 import {
   createInStorage,
+  deleteInStorageSubById,
   getCarList,
   getInStorageSubByMainId,
   getSupplierList,
@@ -361,6 +362,7 @@ watch(
     vis.value = newVal;
     if (newVal) {
       // 当对话框打开时，初始化表单数据
+      selectedRowId.value = '';
       if (props.formData) {
         form.value = { ...props.formData };
         form.value.totalMoney = form.value.totalMoney || 0;
@@ -483,14 +485,47 @@ const subConfirm = (data) => {
   getSubList();
 };
 
-// 选择子表单
-const selectSubForm = () => {
-  // 修改明细的逻辑
+// 修改明细
+const handleEdit = () => {
+  if (!selectedRowId.value) {
+    ElMessage({
+      message: `请选择一条明细`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  subformData.value = Object.assign(selectedRow.value, {
+    addWarehousingMainParam: form.value,
+  });
+  subformDialogVis.value = true;
 };
 
 // 删除操作
 const handleDelete = () => {
-  // 删除明细的逻辑
+  if (!selectedRowId.value) {
+    ElMessage({
+      message: `请选择一条明细`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  ElMessageBox.confirm('确认要删除该明细吗?', '警告', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      deleteInStorageSubById({ id: selectedRowId.value }).then((res) => {
+        ElMessage({
+          message: `删除成功`,
+          type: 'success',
+        });
+        getSubList();
+      });
+    })
+    .catch(() => {});
 };
 
 // 添加处理供应商选择变化的函数

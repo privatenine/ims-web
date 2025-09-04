@@ -87,7 +87,7 @@
     </div>
 
     <ElButtonGroup class="ml-4">
-      <ElButton type="primary" @click="selectSub">
+      <ElButton type="primary" @click="confirm">
         <IconifyIcon
           icon="ep:select"
           class="size-5"
@@ -324,7 +324,7 @@ const onRefresh = () => {
 };
 
 // 选择按钮点击事件
-const selectSub = () => {
+const confirm = () => {
   if (!selectedRow.value) {
     ElMessage({
       message: '请先选择一条数据',
