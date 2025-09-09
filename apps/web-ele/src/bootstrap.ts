@@ -8,7 +8,7 @@ import '@vben/styles';
 import '@vben/styles/ele';
 
 import { useTitle } from '@vueuse/core';
-import ElementPlus, { ElLoading } from 'element-plus';
+import ElementPlus, { ElDialog, ElLoading } from 'element-plus';
 import print from 'vue3-print-nb';
 
 import { $t, setupI18n } from '#/locales';
@@ -36,6 +36,9 @@ async function bootstrap(namespace: string) {
   // setDefaultDrawerProps({
   //   zIndex: 2000,
   // });
+
+  ElDialog.props.draggable.default = true;
+
   const app = createApp(App);
 
   app.use(ElementPlus);

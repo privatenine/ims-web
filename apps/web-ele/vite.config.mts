@@ -17,7 +17,7 @@ export default defineConfig(async () => {
             changeOrigin: true,
             rewrite: (path) => path.replace(/^\/api/, ''),
             // mock代理目标地址
-            target: 'http://www.hbwxyh.com/',
+            target: 'http://www.plkjy.com/api/',
             ws: true,
           },
         },

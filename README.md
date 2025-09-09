@@ -48,7 +48,7 @@ proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     # 后台接口地址
-    proxy_pass http://www.hbwxyh.com/;
+    proxy_pass http://www.plkjy.com/api/;
     rewrite "^/api/(.*)$" /$1 break;
 proxy_redirect default;
 add_header Access-Control-Allow-Origin \*;

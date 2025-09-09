@@ -141,7 +141,7 @@ function clearPreferencesAndLogout() {
     class="flex h-full min-w-0 flex-1 items-center"
   >
     <slot name="menu"></slot>
-    <div class="w-[50%]" style="text-align: center">磐领软件科技有限公司</div>
+    <div class="w-[50%]" style="text-align: center;color:#FFF;">磐领软件科技有限公司</div>
     <div class="w-[50%]" style="text-align: center">
       {{ nUserInfo.username }}
     </div>
