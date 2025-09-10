@@ -4,6 +4,7 @@
     :title="title"
     width="1200"
     append-to-body
+    draggable
     @close="handleClose"
   >
     <el-form
@@ -206,6 +207,8 @@
       :data="tableData"
       ref="tableRef"
       @row-click="handleRowClick"
+      @row-dblclick="handleRowDblClick"
+      height="calc(100vh - 420px)"
       style="width: 100%; margin-top: 20px"
     >
       <el-table-column align="center" width="30">
@@ -433,6 +436,13 @@ const selectedRow = computed(() => {
 const handleRowClick = (row: any) => {
   selectedRowId.value = row.id;
 };
+
+// 添加处理行双击的函数
+const handleRowDblClick = (row: any) => {
+  selectedRowId.value = row.id;
+  handleEdit();
+};
+
 const getSubList = async () => {
   const p = Object.assign({}, queryParams, { warehousingId: form.value.id });
   const res = await getInStorageSubByMainId(p);
@@ -515,15 +525,17 @@ const handleDelete = () => {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     type: 'warning',
-  }).then(() => {
-    deleteInStorageSubById({ id: selectedRowId.value }).then((res) => {
-      ElMessage({
-        message: `删除成功`,
-        type: 'success',
+  })
+    .then(() => {
+      deleteInStorageSubById({ id: selectedRowId.value }).then((res) => {
+        ElMessage({
+          message: `删除成功`,
+          type: 'success',
+        });
+        getSubList();
       });
-      getSubList();
-    });
-  }).catch(() => {});
+    })
+    .catch(() => {});
 };
 
 // 添加处理供应商选择变化的函数

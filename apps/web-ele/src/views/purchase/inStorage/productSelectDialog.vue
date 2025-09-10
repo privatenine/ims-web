@@ -109,9 +109,9 @@
     <el-table
       :data="tableData"
       ref="tableRef"
-      max-height="500"
       stripe
       @row-click="handleRowClick"
+      @row-dblclick="handleRowDblClick"
       style="width: 100%; margin-top: 20px"
     >
       <el-table-column align="center" type="radio" width="30">
@@ -140,7 +140,7 @@
       <el-pagination
         v-model:current-page="queryParams.pageNum"
         v-model:page-size="queryParams.pageSize"
-        :page-sizes="[10, 20, 50, 100]"
+        :page-sizes="[20, 40, 100]"
         :total="total"
         layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
@@ -178,7 +178,7 @@ const tableRef = ref();
 
 const queryParams = reactive({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 40,
   jianPinCode: '',
   name: '',
   carSeriesId: '',
@@ -273,7 +273,7 @@ watch(vis, (newVal) => {
 });
 
 const title = computed(() => {
-  return `新增明细`;
+  return `新增明细-选择产品`;
 });
 
 // 表格相关
@@ -288,6 +288,12 @@ const selectedRow = computed(() => {
 // 添加处理行点击的函数
 const handleRowClick = (row: any) => {
   selectedRowId.value = row.productId;
+};
+
+// 添加处理行双击的函数
+const handleRowDblClick = (row: any) => {
+  selectedRowId.value = row.productId;
+  confirm();
 };
 
 const getList = async () => {

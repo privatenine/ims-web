@@ -183,9 +183,12 @@ const [Modal, modalApi] = useVbenModal({
         const { code, id: warehousingId } = values;
         getInStorageSettlement({ warehousingId, code }).then(({ data }) => {
           formData.value = { ...formData.value, ...data };
-          // 设置初始值：实付金额等于入库金额
+          // 设置初始值：实付金额等于入库金额 入库金额为列表中的totalMoney，在这个dialog中记录为inStorageMoney
           if (data.inStorageMoney && !data.totalMoney) {
             data.totalMoney = data.inStorageMoney;
+            data.discountMoney = 0;
+          } else if (values.totalMoney) {
+            data.inStorageMoney = values.totalMoney;
             data.discountMoney = 0;
           }
           formApi.setValues(data);

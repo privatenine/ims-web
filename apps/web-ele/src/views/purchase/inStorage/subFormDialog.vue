@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="vis" :title="title" append-to-body width="800">
+  <el-dialog v-model="vis" :title="title" draggable append-to-body width="800">
     <el-form
       ref="formRef"
       :model="form"
@@ -109,7 +109,7 @@
         <el-col :span="12">
           <el-form-item label="库位" prop="siteName">
             <el-input v-model="form.siteName" placeholder="请输入库位">
-              <template #prefix>#</template>
+              <!-- <template #prefix>#</template> -->
             </el-input>
           </el-form-item>
         </el-col>
@@ -214,9 +214,9 @@ watch(
       if (props.formData) {
         form.value = { ...props.formData };
         if (form.value.productAttachmentIds?.length > 0) {
-          form.value.productAttListTemp = form.value.productAttachmentIds.split('_').map((item) => {
-            return Number(item);
-          });
+          form.value.productAttListTemp = form.value.productAttachmentIds
+            .split('_')
+            .map(Number);
         }
       } else {
         // 重置表单

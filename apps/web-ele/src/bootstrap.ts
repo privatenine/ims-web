@@ -8,7 +8,7 @@ import '@vben/styles';
 import '@vben/styles/ele';
 
 import { useTitle } from '@vueuse/core';
-import ElementPlus, { ElDialog, ElLoading } from 'element-plus';
+import ElementPlus, { ElDialog, ElTable, ElLoading } from 'element-plus';
 import print from 'vue3-print-nb';
 
 import { $t, setupI18n } from '#/locales';
@@ -37,7 +37,9 @@ async function bootstrap(namespace: string) {
   //   zIndex: 2000,
   // });
 
-  ElDialog.props.draggable.default = true;
+  ElDialog.props.closeOnClickModal.default = false;
+  ElDialog.props.closeOnPressEscape.default = false;
+  ElTable.props.stripe.default = true;
 
   const app = createApp(App);
 

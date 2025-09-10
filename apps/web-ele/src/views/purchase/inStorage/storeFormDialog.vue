@@ -32,9 +32,9 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: '请输入货位',
       },
-      renderComponentContent: () => ({
-        prefix: () => '#',
-      }),
+      // renderComponentContent: () => ({
+      //   prefix: () => '#',
+      // }),
     },
     {
       component: 'Input',
@@ -64,8 +64,11 @@ const [Modal, modalApi] = useVbenModal({
   fullscreenButton: false,
   draggable: true,
   centered: true,
-  showCancelButton: false,
-  showConfirmButton: false,
+  showCancelButton: true,
+  showConfirmButton: true,
+  onConfirm() {
+    onSubmit();
+  },
   onCancel() {
     modalApi.close();
   },

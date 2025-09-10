@@ -288,7 +288,7 @@
       <el-pagination
         v-model:current-page="queryParams.pageNum"
         v-model:page-size="queryParams.pageSize"
-        :page-sizes="[10, 20, 50, 100]"
+        :page-sizes="[20, 50, 100]"
         :total="total"
         layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
@@ -363,7 +363,7 @@ const handleRowClick = (row: any) => {
 // 搜索表单数据
 const queryParams = reactive({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   supplierName: '',
   code: '',
   arrivalId: '',
@@ -405,7 +405,6 @@ const handleReset = () => {
   });
   queryParams.dateRange = [];
   queryParams.pageNum = 1;
-  queryParams.pageSize = 10;
   getList();
 };
 
