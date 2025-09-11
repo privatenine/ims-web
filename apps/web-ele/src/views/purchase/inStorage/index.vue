@@ -607,31 +607,3 @@ const handleCurrentChange = (val: number) => {
   getList();
 };
 </script>
-
-<style scoped>
-/* .app-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px);
-}
-
-.query-form-container {
-  flex-shrink: 0;
-  padding: 10px;
-  background-color: #fff;
-}
-
-.query-btn-container {
-  flex-shrink: 0;
-  padding: 10px;
-  background-color: #fff;
-  border-bottom: 1px solid #ebeef5;
-}
-
-.table-container {
-  flex: 1;
-  overflow: auto;
-  margin-top: 10px;
-  background-color: #fff;
-} */
-</style>
