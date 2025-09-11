@@ -1,151 +1,159 @@
 <template>
-  <el-dialog v-model="vis" :title="title" width="1200" @close="handleClose">
-    <div class="query-form-container">
-      <!-- 添加搜索表单 -->
-      <el-form
-        :model="queryParams"
-        label-width="80px"
-        class="search-form"
-        :inline="true"
+  <el-dialog
+    v-model="vis"
+    :title="title"
+    width="1200"
+    class="form-dialog"
+    @close="handleClose"
+  >
+    <div class="dialog-content">
+      <div class="query-form-container">
+        <!-- 添加搜索表单 -->
+        <el-form
+          :model="queryParams"
+          label-width="80px"
+          class="search-form"
+          :inline="true"
+        >
+          <el-form-item label="简拼码" prop="jianPinCode">
+            <el-input
+              v-model="queryParams.jianPinCode"
+              clearable
+              placeholder="请输入简拼码"
+            />
+          </el-form-item>
+          <el-form-item label="产品名称" prop="name">
+            <el-input
+              v-model="queryParams.name"
+              clearable
+              placeholder="请输入产品名称"
+            />
+          </el-form-item>
+          <el-form-item label="车系" prop="carSeriesId">
+            <el-select
+              v-model="queryParams.carSeriesId"
+              clearable
+              placeholder="请选择车系"
+            >
+              <el-option
+                v-for="item in carSeriesOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="车型" prop="carModelId">
+            <el-select
+              v-model="queryParams.carModelId"
+              clearable
+              placeholder="请选择车型"
+            >
+              <el-option
+                v-for="item in carModelOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="安装位置" prop="positionId">
+            <el-select
+              v-model="queryParams.positionId"
+              clearable
+              placeholder="请选择安装位置"
+            >
+              <el-option
+                v-for="item in positionOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="类别" prop="carTypeId">
+            <el-select
+              v-model="queryParams.carTypeId"
+              clearable
+              placeholder="请选择类别"
+            >
+              <el-option
+                v-for="item in carTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <!-- 操作按钮 -->
+          <el-form-item>
+            <el-button type="primary" @click="handleQuery">搜索</el-button>
+            <el-button @click="handleReset">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <ElButtonGroup class="ml-4">
+        <ElButton type="primary" @click="confirm">
+          <IconifyIcon
+            icon="ep:select"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          选择
+        </ElButton>
+        <ElButton type="primary" disabled>
+          <IconifyIcon
+            icon="ant-design:plus-outlined"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          新增
+        </ElButton>
+      </ElButtonGroup>
+
+      <!-- 添加表格 -->
+      <el-table
+        :data="tableData"
+        ref="tableRef"
+        stripe
+        @row-click="handleRowClick"
+        @row-dblclick="handleRowDblClick"
+        style="width: 100%; margin-top: 20px"
       >
-        <el-form-item label="简拼码" prop="jianPinCode">
-          <el-input
-            v-model="queryParams.jianPinCode"
-            clearable
-            placeholder="请输入简拼码"
-          />
-        </el-form-item>
-        <el-form-item label="产品名称" prop="name">
-          <el-input
-            v-model="queryParams.name"
-            clearable
-            placeholder="请输入产品名称"
-          />
-        </el-form-item>
-        <el-form-item label="车系" prop="carSeriesId">
-          <el-select
-            v-model="queryParams.carSeriesId"
-            clearable
-            placeholder="请选择车系"
-          >
-            <el-option
-              v-for="item in carSeriesOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="车型" prop="carModelId">
-          <el-select
-            v-model="queryParams.carModelId"
-            clearable
-            placeholder="请选择车型"
-          >
-            <el-option
-              v-for="item in carModelOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="安装位置" prop="positionId">
-          <el-select
-            v-model="queryParams.positionId"
-            clearable
-            placeholder="请选择安装位置"
-          >
-            <el-option
-              v-for="item in positionOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="类别" prop="carTypeId">
-          <el-select
-            v-model="queryParams.carTypeId"
-            clearable
-            placeholder="请选择类别"
-          >
-            <el-option
-              v-for="item in carTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <!-- 操作按钮 -->
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">搜索</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <ElButtonGroup class="ml-4">
-      <ElButton type="primary" @click="confirm">
-        <IconifyIcon
-          icon="ep:select"
-          class="size-5"
-          style="margin-right: 4px"
+        <el-table-column align="center" type="radio" width="30">
+          <template #default="scope">
+            <el-radio
+              v-model="selectedRowId"
+              :value="scope.row.productId"
+              @click.stop
+            >
+              &nbsp;
+            </el-radio>
+          </template>
+        </el-table-column>
+        <el-table-column type="index" label="序号" width="60" />
+        <el-table-column prop="name" label="产品名称" width="200" />
+        <el-table-column prop="baseName" label="通用车型" width="120" />
+        <el-table-column prop="jianPinCode" label="简拼码" width="200" />
+        <el-table-column prop="carModelName" label="车型名称" />
+        <el-table-column prop="carSeriesName" label="车系名称" />
+        <el-table-column prop="carTypeName" label="类型名称" />
+        <el-table-column prop="positionName" label="安装位置名称" />
+        <el-table-column prop="price" label="参考价" width="70" />
+      </el-table>
+      <!-- 分页控件 -->
+      <div class="pagination-container">
+        <el-pagination
+          v-model:current-page="queryParams.pageNum"
+          v-model:page-size="queryParams.pageSize"
+          :page-sizes="[20, 40, 100]"
+          :total="total"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
-        选择
-      </ElButton>
-      <ElButton type="primary" disabled>
-        <IconifyIcon
-          icon="ant-design:plus-outlined"
-          class="size-5"
-          style="margin-right: 4px"
-        />
-        新增
-      </ElButton>
-    </ElButtonGroup>
-
-    <!-- 添加表格 -->
-    <el-table
-      :data="tableData"
-      ref="tableRef"
-      stripe
-      @row-click="handleRowClick"
-      @row-dblclick="handleRowDblClick"
-      style="width: 100%; margin-top: 20px"
-    >
-      <el-table-column align="center" type="radio" width="30">
-        <template #default="scope">
-          <el-radio
-            v-model="selectedRowId"
-            :value="scope.row.productId"
-            @click.stop
-          >
-            &nbsp;
-          </el-radio>
-        </template>
-      </el-table-column>
-      <el-table-column type="index" label="序号" width="60" />
-      <el-table-column prop="name" label="产品名称" width="200" />
-      <el-table-column prop="baseName" label="通用车型" width="120" />
-      <el-table-column prop="jianPinCode" label="简拼码" width="200" />
-      <el-table-column prop="carModelName" label="车型名称" />
-      <el-table-column prop="carSeriesName" label="车系名称" />
-      <el-table-column prop="carTypeName" label="类型名称" />
-      <el-table-column prop="positionName" label="安装位置名称" />
-      <el-table-column prop="price" label="参考价" width="70" />
-    </el-table>
-    <!-- 分页控件 -->
-    <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="queryParams.pageNum"
-        v-model:page-size="queryParams.pageSize"
-        :page-sizes="[20, 40, 100]"
-        :total="total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -361,3 +369,21 @@ const handleClose = () => {
   emit('cancel');
 };
 </script>
+<style scoped>
+.form-dialog {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.dialog-content {
+  overflow-y: auto;
+  max-height: calc(90vh - 120px);
+  padding-right: 10px;
+}
+
+:deep(.el-dialog__body) {
+  flex: 1;
+  overflow: hidden;
+}
+</style>

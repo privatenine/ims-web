@@ -92,9 +92,9 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="是否在用" prop="enable">
+        <el-form-item label="是否在用" prop="settingsEnable">
           <el-select
-            v-model="queryParams.enable"
+            v-model="queryParams.settingsEnable"
             placeholder="请选择"
             clearable
           >
@@ -251,6 +251,7 @@
         </el-table-column>
         <el-table-column type="index" width="60" label="序号" />
         <el-table-column prop="name" label="产品名称" width="200" />
+        <el-table-column prop="jianPinCode" label="简拼码" width="100" />
         <el-table-column prop="baseName" label="通用车型" width="100" />
         <el-table-column prop="carModelName" label="车型名称" width="100" />
         <el-table-column prop="carSeriesName" label="车系名称" width="100" />
@@ -287,7 +288,7 @@
             {{ dayjs(row.settingsCreateTime).format('YYYY-MM-DD') }}
           </template>
         </el-table-column>
-        <el-table-column prop="settingsEnable" label="是否再用" width="80">
+        <el-table-column prop="settingsEnable" label="是否在用" width="80">
           <template #default="{ row }">
             <ElTag
               :type="
@@ -415,7 +416,7 @@ const queryParams = reactive({
   carModelId: undefined,
   positionId: undefined,
   carTypeId: undefined,
-  enable: undefined,
+  settingsEnable: undefined,
   isPublic: undefined,
   isFuzzy: undefined,
 });

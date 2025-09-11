@@ -8,7 +8,7 @@
     class="form-dialog"
   >
     <div class="dialog-content">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="产品名称" prop="name">
@@ -21,7 +21,7 @@
           </el-col>
 
           <el-col :span="8">
-            <el-form-item label="启用/停用" prop="enable">
+            <el-form-item label="公用是否停用" prop="enable">
               <el-radio-group v-model="form.enable">
                 <el-radio :label="0">停用</el-radio>
                 <el-radio :label="1">启用</el-radio>
@@ -174,6 +174,25 @@
             </el-form-item>
           </el-col>
 
+          <el-col :span="8">
+            <el-form-item label="通用车型" prop="baseId" class="col-span-3">
+              <el-select
+                v-model="form.baseId"
+                placeholder="请选择"
+                clearable
+                readonly
+                @change="handleBaseChange"
+              >
+                <el-option
+                  v-for="item in baseOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
           <el-col :span="16">
             <el-form-item label="产品资料备注" prop="remark" class="col-span-2">
               <el-input v-model="form.remark" placeholder="请输入" clearable />
@@ -212,24 +231,6 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="12">
-            <el-form-item label="通用车型" prop="baseId" class="col-span-3">
-              <el-select
-                v-model="form.baseId"
-                placeholder="请选择"
-                clearable
-                readonly
-                @change="handleBaseChange"
-              >
-                <el-option
-                  v-for="item in baseOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
 
           <!-- <el-col :span="24">
             <el-form-item label="后45度照片" prop="img_path_45_h">
