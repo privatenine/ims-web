@@ -229,7 +229,7 @@
             class="size-5"
             style="margin-right: 4px"
           />
-          提前到产品资料
+          提交公用
         </ElButton>
       </ElButtonGroup>
     </div>
