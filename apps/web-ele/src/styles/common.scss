@@ -49,6 +49,6 @@ $longQueryWidth: 352px;
   margin-top: 10px;
 }
 
-.el-dialog {
+.el-dialog:not(.is-fullscreen) {
   margin-top: 2vh !important;
 }

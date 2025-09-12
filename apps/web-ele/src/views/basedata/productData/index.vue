@@ -213,6 +213,18 @@
         </ElButton>
         <ElButton
           type="primary"
+          @click="upEnable"
+          v-if="rights.includes('启用/停用')"
+        >
+          <IconifyIcon
+            icon="mdi:list-status"
+            class="size-5"
+            style="margin-right: 4px"
+          />
+          公用资料启/停用
+        </ElButton>
+        <ElButton
+          type="primary"
           @click="uptStatus"
           v-if="rights.includes('启用/停用')"
         >
@@ -223,7 +235,11 @@
           />
           启用/停用
         </ElButton>
-        <ElButton type="primary" v-if="rights.includes('提交公用')" disabled>
+        <ElButton
+          type="primary"
+          @click="upPublic"
+          v-if="rights.includes('提交公用')"
+        >
           <IconifyIcon
             icon="mdi:list-status"
             class="size-5"
@@ -355,6 +371,7 @@ import {
   getVehiclePositionList,
   getVehicleSeriesList,
   getVehicleTypeList,
+  updateProduct,
   updateProjectDisable,
   updateProjectEnable,
   updateProjectJPM,
@@ -497,6 +514,73 @@ function openDetail() {
       settingRemark: selectedRow.value.settingsRemark,
     })
     .open();
+}
+function upEnable() {
+  if (!selectedRow.value?.dataId) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  ElMessageBox.confirm('确定要更改当前数据的启用状态吗?', '警告', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      const p = {
+        ...selectedRow.value,
+        id: selectedRow.value.dataId,
+        remark: selectedRow.value.dataRemark,
+        settingRemark: selectedRow.value.settingsRemark,
+        enable: selectedRow.value.dataEnable==1 ? 0 : 1,
+      };
+      updateProduct(p).then(() => {
+        ElMessage({
+          message: `操作成功!`,
+          type: 'success',
+          plain: true,
+        });
+        handleQuery();
+      });
+    })
+    .catch(() => {});
+}
+function upPublic() {
+  if (!selectedRow.value?.dataId) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  ElMessageBox.confirm('确定要提交公用吗?', '警告', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      const p = {
+        ...selectedRow.value,
+        id: selectedRow.value.dataId,
+        remark: selectedRow.value.dataRemark,
+        settingRemark: selectedRow.value.settingsRemark,
+        enable: selectedRow.value.dataEnable,
+        isPublic: 1,
+      };
+      updateProduct(p).then(() => {
+        ElMessage({
+          message: `操作成功!`,
+          type: 'success',
+          plain: true,
+        });
+        handleQuery();
+      });
+    })
+    .catch(() => {});
 }
 
 function uptStatus() {

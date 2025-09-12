@@ -8,7 +8,7 @@
     class="form-dialog"
   >
     <div class="dialog-content">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="130px">
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="产品名称" prop="name">
@@ -21,10 +21,10 @@
           </el-col>
 
           <el-col :span="8">
-            <el-form-item label="公用是否停用" prop="enable">
+            <el-form-item label="公用资料启/停用" prop="enable">
               <el-radio-group v-model="form.enable">
-                <el-radio :label="0">停用</el-radio>
                 <el-radio :label="1">启用</el-radio>
+                <el-radio :label="0">停用</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -231,7 +231,6 @@
             </el-form-item>
           </el-col>
 
-
           <!-- <el-col :span="24">
             <el-form-item label="后45度照片" prop="img_path_45_h">
               <el-upload
@@ -373,18 +372,18 @@ const form = ref({
   lowerLimit: 0,
   settingRemark: '',
   baseId: '',
-  img_path_45_h: [],
-  img_path_45_q: [],
-  img_path_location: [],
-  img_path_other: [],
-  img_path_product: [],
+  // img_path_45_h: [],
+  // img_path_45_q: [],
+  // img_path_location: [],
+  // img_path_other: [],
+  // img_path_product: [],
   id: '',
 });
 
 // 表单验证规则
 const rules = ref<FormRules>({
   name: [{ required: true, message: '产品名称不能为空', trigger: 'blur' }],
-  baseId: [{ required: true, message: '通用车型不能为空', trigger: 'change' }],
+  // baseId: [{ required: true, message: '通用车型不能为空', trigger: 'change' }],
   enable: [{ required: true, message: '启用状态不能为空', trigger: 'change' }],
 });
 
@@ -445,11 +444,11 @@ watch(
             lowerLimit: 0,
             settingRemark: '',
             baseId: '',
-            img_path_45_h: [],
-            img_path_45_q: [],
-            img_path_location: [],
-            img_path_other: [],
-            img_path_product: [],
+            // img_path_45_h: [],
+            // img_path_45_q: [],
+            // img_path_location: [],
+            // img_path_other: [],
+            // img_path_product: [],
             id: '',
           },
           props.formData,
@@ -475,11 +474,11 @@ watch(
           lowerLimit: 0,
           settingRemark: '',
           baseId: '',
-          img_path_45_h: [],
-          img_path_45_q: [],
-          img_path_location: [],
-          img_path_other: [],
-          img_path_product: [],
+          // img_path_45_h: [],
+          // img_path_45_q: [],
+          // img_path_location: [],
+          // img_path_other: [],
+          // img_path_product: [],
           id: '',
         };
       }

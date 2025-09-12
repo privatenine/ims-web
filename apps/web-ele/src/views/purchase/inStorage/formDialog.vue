@@ -5,6 +5,7 @@
     width="1200"
     append-to-body
     draggable
+    fullscreen
     @close="handleClose"
   >
     <el-form
