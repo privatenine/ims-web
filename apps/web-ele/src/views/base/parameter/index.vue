@@ -13,6 +13,7 @@
             v-model="queryParams.name"
             placeholder="请输入参数名称"
             clearable
+            @keyup.enter="handleQuery"
           />
         </el-form-item>
 
@@ -21,6 +22,7 @@
             v-model="queryParams.category"
             placeholder="请选择类别"
             clearable
+            @change="handleQuery"
           >
             <el-option
               v-for="item in categoryOptions"
@@ -36,6 +38,7 @@
             v-model="queryParams.status"
             placeholder="请选择状态"
             clearable
+            @change="handleQuery"
           >
             <el-option label="启用" :value="1" />
             <el-option label="停用" :value="0" />
@@ -125,9 +128,6 @@
         :rules="formRules"
         label-width="100px"
       >
-        <el-form-item label="参数名称" prop="name">
-          <el-input v-model="formData.name" placeholder="请输入参数名称" />
-        </el-form-item>
         <el-form-item label="类别" prop="category">
           <el-select v-model="formData.category" placeholder="请选择类别">
             <el-option
@@ -137,6 +137,9 @@
               :value="item.value"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="参数名称" prop="name">
+          <el-input v-model="formData.name" placeholder="请输入参数名称" />
         </el-form-item>
       </el-form>
       <template #footer>

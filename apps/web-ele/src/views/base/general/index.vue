@@ -7,12 +7,14 @@
         :inline="true"
         class="query-form"
         label-width="110px"
+        @submit.prevent="handleQuery"
       >
         <el-form-item label="简拼码" prop="jianPinCode">
           <el-input
             v-model="queryParams.jianPinCode"
             placeholder="请输入简拼码"
             clearable
+            @keyup.enter="handleQuery"
           />
         </el-form-item>
 
@@ -21,6 +23,7 @@
             v-model="queryParams.name"
             placeholder="请输入产品名称"
             clearable
+            @keyup.enter="handleQuery"
           />
         </el-form-item>
 
@@ -29,6 +32,7 @@
             v-model="queryParams.exclude"
             placeholder="请输入"
             clearable
+            @keyup.enter="handleQuery"
           />
         </el-form-item>
 
@@ -37,6 +41,7 @@
             v-model="queryParams.carSeriesId"
             placeholder="请选择车系"
             clearable
+            @change="handleQuery"
           >
             <el-option
               v-for="item in carSeriesOptions"
@@ -52,6 +57,7 @@
             v-model="queryParams.carModelId"
             placeholder="请选择车型"
             clearable
+            @change="handleQuery"
           >
             <el-option
               v-for="item in carModelOptions"
@@ -67,6 +73,7 @@
             v-model="queryParams.positionId"
             placeholder="请选择安装位置"
             clearable
+            @change="handleQuery"
           >
             <el-option
               v-for="item in positionOptions"
@@ -82,6 +89,7 @@
             v-model="queryParams.carTypeId"
             placeholder="请选择类型"
             clearable
+            @change="handleQuery"
           >
             <el-option
               v-for="item in carTypeOptions"
@@ -97,6 +105,7 @@
             v-model="queryParams.settingsEnable"
             placeholder="请选择"
             clearable
+            @change="handleQuery"
           >
             <el-option label="启用" :value="1" />
             <el-option label="停用" :value="0" />
@@ -108,6 +117,7 @@
             v-model="queryParams.isPublic"
             placeholder="请选择"
             clearable
+            @change="handleQuery"
           >
             <el-option label="公用" :value="1" />
             <el-option label="私用" :value="0" />
@@ -119,6 +129,7 @@
             v-model="queryParams.isFuzzy"
             placeholder="请选择"
             clearable
+            @change="handleQuery"
           >
             <el-option label="是" :value="1" />
             <el-option label="否" :value="0" />
@@ -365,16 +376,16 @@ import dayjs from 'dayjs';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 import {
-  deleteProductByIds,
-  getProductList,
+  // deleteProductByIds,
+  // getProductList,
   getVehicleModelList,
   getVehiclePositionList,
   getVehicleSeriesList,
   getVehicleTypeList,
-  updateProduct,
-  updateProjectDisable,
-  updateProjectEnable,
-  updateProjectJPM,
+  // updateProduct,
+  // updateProjectDisable,
+  // updateProjectEnable,
+  // updateProjectJPM,
 } from '#/api';
 import { productDataEnableMap, useMenuRights } from '#/utils';
 
@@ -463,9 +474,9 @@ const handleReset = () => {
 const getList = async () => {
   const p = JSON.parse(JSON.stringify(queryParams));
 
-  const res = await getProductList(p);
-  tableData.value = res.data;
-  total.value = res.total;
+  // const res = await getProductList(p);
+  // tableData.value = res.data;
+  // total.value = res.total;
 };
 
 const handleAdd = () => {
@@ -537,14 +548,14 @@ function upEnable() {
         settingRemark: selectedRow.value.settingsRemark,
         enable: selectedRow.value.dataEnable == 1 ? 0 : 1,
       };
-      updateProduct(p).then(() => {
-        ElMessage({
-          message: `操作成功!`,
-          type: 'success',
-          plain: true,
-        });
-        handleQuery();
-      });
+      // updateProduct(p).then(() => {
+      //   ElMessage({
+      //     message: `操作成功!`,
+      //     type: 'success',
+      //     plain: true,
+      //   });
+      //   handleQuery();
+      // });
     })
     .catch(() => {});
 }
@@ -571,14 +582,14 @@ function upPublic() {
         enable: selectedRow.value.dataEnable,
         isPublic: 1,
       };
-      updateProduct(p).then(() => {
-        ElMessage({
-          message: `操作成功!`,
-          type: 'success',
-          plain: true,
-        });
-        handleQuery();
-      });
+      // updateProduct(p).then(() => {
+      //   ElMessage({
+      //     message: `操作成功!`,
+      //     type: 'success',
+      //     plain: true,
+      //   });
+      //   handleQuery();
+      // });
     })
     .catch(() => {});
 }
@@ -599,17 +610,17 @@ function uptStatus() {
     type: 'warning',
   })
     .then(() => {
-      (selectedRow.value.settingsEnable
-        ? updateProjectDisable({ id: selectedRow.value.dataId })
-        : updateProjectEnable({ id: selectedRow.value.dataId })
-      ).then(() => {
-        ElMessage({
-          message: `操作成功!`,
-          type: 'success',
-          plain: true,
-        });
-        handleQuery();
-      });
+      // (selectedRow.value.settingsEnable
+      //   ? updateProjectDisable({ id: selectedRow.value.dataId })
+      //   : updateProjectEnable({ id: selectedRow.value.dataId })
+      // ).then(() => {
+      //   ElMessage({
+      //     message: `操作成功!`,
+      //     type: 'success',
+      //     plain: true,
+      //   });
+      //   handleQuery();
+      // });
     })
     .catch(() => {});
 }
@@ -630,16 +641,16 @@ function uptProjectJPM() {
     type: 'warning',
   })
     .then(() => {
-      updateProjectJPM({
-        id: selectedRow.value.dataId,
-      }).then(() => {
-        ElMessage({
-          message: `操作成功!`,
-          type: 'success',
-          plain: true,
-        });
-        handleQuery();
-      });
+      // updateProjectJPM({
+      //   id: selectedRow.value.dataId,
+      // }).then(() => {
+      //   ElMessage({
+      //     message: `操作成功!`,
+      //     type: 'success',
+      //     plain: true,
+      //   });
+      //   handleQuery();
+      // });
     })
     .catch(() => {});
 }
@@ -659,22 +670,22 @@ function onDelete() {
     type: 'warning',
   })
     .then(() => {
-      deleteProductByIds({ ids: [selectedRow.value.dataId] })
-        .then(() => {
-          ElMessage({
-            message: `删除成功!`,
-            type: 'success',
-            plain: true,
-          });
-          handleQuery();
-        })
-        .catch(() => {
-          ElMessage({
-            message: `删除失败!`,
-            type: 'error',
-            plain: true,
-          });
-        });
+      // deleteProductByIds({ ids: [selectedRow.value.dataId] })
+      //   .then(() => {
+      //     ElMessage({
+      //       message: `删除成功!`,
+      //       type: 'success',
+      //       plain: true,
+      //     });
+      //     handleQuery();
+      //   })
+      //   .catch(() => {
+      //     ElMessage({
+      //       message: `删除失败!`,
+      //       type: 'error',
+      //       plain: true,
+      //     });
+      //   });
     })
     .catch(() => {});
 }

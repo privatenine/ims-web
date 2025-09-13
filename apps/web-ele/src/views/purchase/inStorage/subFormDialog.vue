@@ -135,7 +135,13 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="handleConfirm">确认</el-button>
+        <el-button
+          type="primary"
+          @click="handleConfirm"
+          :loading="confirmLoading"
+        >
+          确认
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -163,6 +169,7 @@ const emit = defineEmits(['update:visible', 'confirm', 'cancel']);
 
 const vis = ref(false);
 const formRef = ref<FormInstance>();
+const confirmLoading = ref(false);
 
 // 表单数据
 const form = ref({
@@ -328,20 +335,25 @@ const handleConfirm = async () => {
     return;
   }
 
+  confirmLoading.value = true;
   handleFormData();
 
   (form.value.id
     ? updateInStorageSub(form.value)
     : createInStorageSub(form.value)
-  ).then((res) => {
-    ElMessage({
-      message: `添加明细成功`,
-      type: 'success',
-      plain: true,
+  )
+    .then((res) => {
+      ElMessage({
+        message: `添加明细成功`,
+        type: 'success',
+        plain: true,
+      });
+      emit('confirm', res.data);
+      vis.value = false;
+    })
+    .finally(() => {
+      confirmLoading.value = false;
     });
-    emit('confirm', res.data);
-    vis.value = false;
-  });
 };
 </script>
 

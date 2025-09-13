@@ -18,19 +18,17 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="供应商" prop="supplierId">
-            <el-select
-              v-model="form.supplierId"
-              placeholder="请选择"
+            <el-input
+              v-model="form.supplierName"
+              placeholder="请选择供应商"
+              readonly
               clearable
-              @change="handleSupplierChange"
+              @click="openSupplierDialog"
             >
-              <el-option
-                v-for="item in supplierOptions"
-                :key="item.id"
-                :label="item.fullName"
-                :value="item.id"
-              />
-            </el-select>
+              <template #append>
+                <el-button @click="openSupplierDialog">选择供应商</el-button>
+              </template>
+            </el-input>
           </el-form-item>
         </el-col>
 
@@ -141,7 +139,7 @@
     </el-form>
 
     <ElButtonGroup class="ml-4">
-      <ElButton type="primary" @click="save(1)">
+      <ElButton type="primary" @click="save(1)" :loading="saveLoading">
         <IconifyIcon
           icon="material-symbols:save-outline"
           class="size-5"
@@ -149,7 +147,7 @@
         />
         保存
       </ElButton>
-      <ElButton type="primary" @click="save(2)">
+      <ElButton type="primary" @click="save(2)" :loading="saveLoading">
         <IconifyIcon
           class="size-5"
           style="margin-right: 4px"
@@ -261,6 +259,13 @@
       @close="subformDialogVis = false"
       @confirm="subConfirm"
     />
+
+    <!-- 添加: 供应商选择弹框 -->
+    <SupplierSelectDialog
+      v-model:visible="supplierSelectDialogVis"
+      @confirm="handleSupplierSelect"
+      @close="supplierSelectDialogVis = false"
+    />
   </el-dialog>
 </template>
 
@@ -282,6 +287,8 @@ import {
   getSupplierList,
   updateInStorage,
 } from '#/api';
+// 添加: 导入供应商选择弹框组件
+import SupplierSelectDialog from '#/components/SupplierSelectDialog.vue';
 import { useMenuRights } from '#/utils';
 
 import productSelectDialog from './productSelectDialog.vue';
@@ -404,26 +411,34 @@ const title = computed(() => {
   return `${props.formData.value?.id ? '修改' : '新增'}入库`;
 });
 
+const saveLoading = ref(false);
+
 async function save(statusFlag: number) {
   // 校验formRef
   const valid = await formRef.value?.validate();
   if (!valid) {
     return;
   }
+
+  saveLoading.value = true;
   (tableData.value.length === 0
     ? createInStorage(Object.assign({}, form.value, { statusFlag }))
     : updateInStorage(
         Object.assign({}, form.value, { statusFlag, id: form.value.id }),
       )
-  ).then(() => {
-    ElMessage({
-      message: `提交成功`,
-      type: 'success',
-      plain: true,
+  )
+    .then(() => {
+      ElMessage({
+        message: `提交成功`,
+        type: 'success',
+        plain: true,
+      });
+      emit('confirm', form.value);
+      vis.value = false;
+    })
+    .finally(() => {
+      saveLoading.value = false;
     });
-    emit('confirm', form.value);
-    vis.value = false;
-  });
 }
 
 // 表格相关
@@ -479,6 +494,21 @@ const openSub = () => {
   }
   // 打开对话框
   productSelectDialogVis.value = true;
+};
+
+// 添加: 供应商选择弹框相关
+const supplierSelectDialogVis = ref(false);
+const openSupplierDialog = () => {
+  supplierSelectDialogVis.value = true;
+};
+
+// 添加: 处理供应商选择确认
+const handleSupplierSelect = (row: any) => {
+  if (row) {
+    form.value.supplierId = row.id;
+    form.value.supplierName = row.fullName;
+  }
+  supplierSelectDialogVis.value = false;
 };
 
 const subformDialogVis = ref(false);
@@ -537,18 +567,6 @@ const handleDelete = () => {
       });
     })
     .catch(() => {});
-};
-
-// 添加处理供应商选择变化的函数
-const handleSupplierChange = (val: string) => {
-  if (val) {
-    const selected = supplierOptions.value.find((item) => item.id === val);
-    if (selected) {
-      form.value.supplierName = selected.fullName;
-    }
-  } else {
-    form.value.supplierName = '';
-  }
 };
 
 // 添加处理到货方式选择变化的函数

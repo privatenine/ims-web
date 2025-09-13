@@ -22,3 +22,22 @@ export async function getAttList() {
     '/product/getAttList',
   );
 }
+export async function getAttById(id: any): Promise<any> {
+  return requestClient.get<any>(`/product/getAttById/${id}`);
+}
+
+export async function addAtt(data: any) {
+  return requestClient.post<CommApi.Response<any>>(`/product/addAtt`, data);
+}
+export async function updateAttById(data: any) {
+  return requestClient.put<CommApi.Response<any>>(
+    `/product/updateAttById`,
+    data,
+  );
+}
+export async function deleteAttByIds(data: any) {
+  return requestClient.post<CommApi.Response<any>>(
+    `/product/deleteAttByIds`,
+    data,
+  );
+}

@@ -10,7 +10,7 @@
       >
         <!-- 单号 -->
         <el-form-item label="单号" prop="code">
-          <el-input v-model="queryParams.code" />
+          <el-input v-model="queryParams.code" @keyup.enter="handleQuery" />
         </el-form-item>
 
         <!-- 供应商 -->
@@ -28,6 +28,7 @@
             v-model="queryParams.arrivalId"
             placeholder="请选择"
             clearable
+            @change="handleQuery"
           >
             <el-option
               v-for="item in arrivalOptions"
@@ -44,6 +45,7 @@
             v-model="queryParams.pickUpCarId"
             placeholder="请选择"
             clearable
+            @change="handleQuery"
           >
             <el-option
               v-for="item in carOptions"
