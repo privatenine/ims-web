@@ -465,6 +465,7 @@ const [approveModel, approveModelApi] = useVbenModal({
   connectedComponent: approveDialog,
   destroyOnClose: true,
   centered: true,
+  fullscreen: true,
 });
 function handleApprove() {
   if (!selectedRow.value?.id) {
@@ -490,6 +491,7 @@ const [DetailModel, detailModelApi] = useVbenModal({
   connectedComponent: Detail,
   destroyOnClose: true,
   centered: true,
+  fullscreen: true,
 });
 function openDetail() {
   if (!selectedRow.value?.id) {
