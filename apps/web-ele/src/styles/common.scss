@@ -49,6 +49,16 @@ $longQueryWidth: 352px;
   margin-top: 10px;
 }
 
-.el-dialog:not(.is-fullscreen) {
+.el-dialog:not(.main-dialog) {
   margin-top: 2vh !important;
+}
+:has(> .el-overlay-dialog) {
+  pointer-events: none !important;//dialog外包裹的盒子区域设置鼠标不再操作当前层
+}
+.el-dialog__header,.el-dialog__body,.el-dialog__footer, {
+  pointer-events: auto !important;//dialog真正区域设置鼠标操作当前层
+}
+.main-dialog{
+  width: calc(100% - 224px) !important;
+  margin: 0 0 0 224px !important;
 }

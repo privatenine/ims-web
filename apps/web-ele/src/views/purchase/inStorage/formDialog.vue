@@ -1,11 +1,10 @@
 <template>
   <el-dialog
+    class="main-dialog"
     v-model="vis"
     :title="title"
     width="1200"
     append-to-body
-    draggable
-    fullscreen
     @close="handleClose"
   >
     <el-form
@@ -408,7 +407,7 @@ watch(vis, (newVal) => {
 });
 
 const title = computed(() => {
-  return `${props.formData.value?.id ? '修改' : '新增'}入库`;
+  return `${props.formData?.id ? '修改' : '新增'}入库`;
 });
 
 const saveLoading = ref(false);
