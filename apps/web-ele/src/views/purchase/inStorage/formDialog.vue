@@ -206,7 +206,7 @@
       ref="tableRef"
       @row-click="handleRowClick"
       @row-dblclick="handleRowDblClick"
-      height="calc(100vh - 420px)"
+      height="calc(100vh - 470px)"
       style="width: 100%; margin-top: 20px"
     >
       <el-table-column align="center" width="30">

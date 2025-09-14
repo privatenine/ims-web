@@ -60,5 +60,6 @@ $longQueryWidth: 352px;
 }
 .main-dialog{
   width: calc(100% - 224px) !important;
-  margin: 0 0 0 224px !important;
+  height: calc(100% - 90px) !important;
+  margin: 90px 0 0 224px !important;
 }

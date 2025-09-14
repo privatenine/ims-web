@@ -16,11 +16,6 @@ export function useFormSchema(): VbenFormSchema[] {
         readonly: true,
       },
     },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'carNum',
-    //   label: '日期',
-    // },
     {
       component: 'Input',
       fieldName: 'code',
@@ -57,7 +52,6 @@ export function useFormSchema(): VbenFormSchema[] {
       fieldName: 'pickUpCarId',
       label: '提货车牌',
       componentProps: {
-        // 菜单接口转options格式
         afterFetch: ({ data }: { data: Array<CarApi.Car> }) => {
           return data.map((item: CarApi.Car) => ({
             label: item.carNum || '',
@@ -70,11 +64,6 @@ export function useFormSchema(): VbenFormSchema[] {
         placeholder: '请选择',
       },
     },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'carNum',
-    //   label: '提货员工',
-    // },
     {
       component: 'Select',
       fieldName: 'unloadingId',
@@ -94,11 +83,6 @@ export function useFormSchema(): VbenFormSchema[] {
         ],
       },
     },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'carNum',
-    //   label: '卸货员工',
-    // },
     {
       component: 'InputNumber',
       fieldName: 'totalMoney',
@@ -108,7 +92,6 @@ export function useFormSchema(): VbenFormSchema[] {
         clearable: true,
         readonly: true,
         disabled: true,
-        // class: 'w-full',
       },
     },
     {
@@ -122,11 +105,6 @@ export function useFormSchema(): VbenFormSchema[] {
         disabled: true,
       },
     },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'carNum',
-    //   label: '入库员工',
-    // },
     {
       component: 'Input',
       fieldName: 'remark',

@@ -9,6 +9,7 @@ import { accessRoutes, coreRouteNames } from '#/router/routes';
 import { useAuthStore } from '#/store';
 
 import { generateAccess } from './access';
+import { mockMenuData } from './mock';
 
 /**
  * 通用守卫配置
@@ -187,18 +188,19 @@ function setupAccessGuard(router: Router) {
       routerList = toRouters(menuData.data);
       console.log('获取菜单数据成功:', menuData.data);
     } catch (error) {
-      console.error('获取菜单数据失败:', error);
-      // 如果菜单获取失败，尝试重新获取用户信息和菜单
-      try {
-        console.log('尝试重新获取菜单数据...');
-        const retryMenuData = await authStore.fetchMeunList();
-        routerList = toRouters(retryMenuData.data);
-        console.log('重新获取菜单数据成功:', retryMenuData.data);
-      } catch (retryError) {
-        console.error('重新获取菜单数据仍然失败:', retryError);
-        // 如果仍然失败，设置为空数组，避免阻塞
-        routerList = [];
-      }
+      console.error('获取菜单数据失败,使用mock菜单数据');
+      routerList = toRouters(mockMenuData.data);
+      // // 如果菜单获取失败，尝试重新获取用户信息和菜单
+      // try {
+      //   console.log('尝试重新获取菜单数据...');
+      //   const retryMenuData = await authStore.fetchMeunList();
+      //   routerList = toRouters(retryMenuData.data);
+      //   console.log('重新获取菜单数据成功:', retryMenuData.data);
+      // } catch (retryError) {
+      //   console.error('重新获取菜单数据仍然失败:', retryError);
+      //   // 如果仍然失败，设置为空数组，避免阻塞
+      //   routerList = [];
+      // }
     }
     // console.log('menuList', menuList, accessRoutes);
 

@@ -182,7 +182,7 @@
           v-if="
             rights.includes('带价单据') ||
             rights.includes('数量单据') ||
-            rights.includes('单一标签') ||
+            // rights.includes('单一标签') ||
             rights.includes('整单标签')
           "
         >
@@ -217,12 +217,12 @@
               >
                 一般入库
               </ElDropdownItem>
-              <ElDropdownItem
+              <!-- <ElDropdownItem
                 @click="openDetailPrint"
                 v-if="rights.includes('单一标签')"
               >
                 单一标签
-              </ElDropdownItem>
+              </ElDropdownItem> -->
               <ElDropdownItem
                 @click="openDetailPrint"
                 v-if="rights.includes('整单标签')"
