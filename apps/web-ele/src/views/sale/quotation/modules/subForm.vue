@@ -292,7 +292,7 @@ const [Grid, gridApi] = useVbenVxeGrid<BillApi.Bill>({
   } as VxeGridListeners<BillApi.Bill>,
 });
 
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: BillApi.Bill | undefined) => void,
   );
@@ -312,7 +312,7 @@ function editSelectRow() {
             选择
           </ElButton>
 
-          <ElButton type="primary" @click="editSelectRow">
+          <ElButton type="primary" @click="handleUpdate">
             <IconifyIcon
               class="size-5"
               style="margin-right: 4px"

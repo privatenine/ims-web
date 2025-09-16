@@ -124,7 +124,7 @@ function onCreate() {
   formModelApi.setData({}).open();
 }
 
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())((row) => {
     formModelApi
       .setData({
@@ -255,7 +255,7 @@ function onDelete() {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon

@@ -102,7 +102,7 @@ const [DetailModel, detailModelApi] = useVbenModal({
   connectedComponent: Detail,
   destroyOnClose: true,
 });
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: SupplierApi.Supplier | undefined) => void,
   );
@@ -175,7 +175,7 @@ function onRefresh() {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon

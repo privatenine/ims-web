@@ -3,31 +3,49 @@ import type {
   VxeGridListeners,
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
-import type { CustomerApi } from '#/api';
+import type { BillApi, CustomerApi } from '#/api';
 
-import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
-import { ElButton, ElButtonGroup, ElMessage, ElTag } from 'element-plus';
+import { ElButton, ElButtonGroup, ElMessage } from 'element-plus';
 
 import { useSelectedRow, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteCustomerByIds, getCustomerList } from '#/api';
-import { GenderMap, useMenuRights } from '#/utils';
+import { deleteBillById, getBillList } from '#/api';
 
 import { useColumns, useGridFormSchema } from './data';
-import Detail from './modules/detail.vue';
+import CustomerList from './modules/customerList.vue';
 import Form from './modules/form.vue';
 
-const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
-console.warn('rights', rights);
+// const selectRow = ref<BillApi.Bill>({});
 
-const [Grid, gridApi] = useVbenVxeGrid({
+onMounted(() => {
+  gridApi.formApi.updateSchema([
+    {
+      fieldName: 'custName',
+      componentProps: {
+        onClick() {
+          customerListModalApi.open();
+        },
+      },
+    },
+  ]);
+});
+
+const [FormModel, formModelApi] = useVbenModal({
+  connectedComponent: Form,
+  destroyOnClose: true,
+  centered: true,
+});
+
+const [Grid, gridApi] = useVbenVxeGrid<BillApi.Bill>({
   formOptions: {
     schema: useGridFormSchema(),
     submitOnChange: true,
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+    fieldMappingTime: [['rangePicker', ['startTime', 'endTime'], 'x']],
+    wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-6',
   },
   gridOptions: {
     columns: useColumns(),
@@ -42,7 +60,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       },
       ajax: {
         query: async ({ page, sort }, formValues) => {
-          return await getCustomerList({
+          return await getBillList({
             ...formValues,
             pageNum: page.currentPage,
             pageSize: page.pageSize,
@@ -67,7 +85,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
       trigger: 'cell',
       remote: true,
     },
-    exportConfig: {},
     toolbarConfig: {
       custom: true,
       export: true,
@@ -75,12 +92,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
       search: true,
       zoom: true,
     },
-  } as VxeTableGridOptions<CustomerApi.Customer>,
+  } as VxeTableGridOptions<BillApi.Bill>,
+
   gridEvents: {
     // cellClick: ({ row }) => {
     //   // message.info(`cell-click: ${row.name}`);
     // },
-    // radioChange({ row }: { row: CustomerApi.Customer }) {
+    // radioChange({ row }: { row: BillApi.Bill }) {
     //   selectRow.value = row;
     // },
     sortChange({ column }) {
@@ -91,48 +109,37 @@ const [Grid, gridApi] = useVbenVxeGrid({
         gridApi.query();
       }
     },
-  } as VxeGridListeners<CustomerApi.Customer>,
+  } as VxeGridListeners<BillApi.Bill>,
 });
-const [DetailModeal, DetailModalApi] = useVbenModal({
-  connectedComponent: Detail,
-  destroyOnClose: true,
-});
-const [FormModel, formModelApi] = useVbenModal({
-  connectedComponent: Form,
-  destroyOnClose: true,
-});
+
+// onmounted(() => {
+//   gridApi.updateGridFormSchema();
+// });
+
 function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
-    onEdit as (data: CustomerApi.Customer | undefined) => void,
+    onEdit as (data: BillApi.Bill | undefined) => void,
   );
 }
 function deleteSelectRow() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
-    onDelete as (data: CustomerApi.Customer | undefined) => void,
+    onDelete as (data: BillApi.Bill | undefined) => void,
     true,
   );
 }
 
-function detailSelectRow() {
-  useSelectedRow(gridApi.grid.getRadioRecord())((data) => {
-    DetailModalApi.setData(data).open();
-  });
-}
-
-function onCreate() {
-  formModelApi.setData({}).open();
-}
-function onEdit(row: CustomerApi.Customer) {
+function onEdit(row: BillApi.Bill) {
   formModelApi.setData(row).open();
 }
-function onDelete(row: CustomerApi.Customer) {
+
+function onDelete(row: BillApi.Bill) {
   const hideLoading = ElMessage({
     message: `正在删除...`,
     type: 'info',
     plain: true,
     duration: 0,
   });
-  deleteCustomerByIds({ ids: [row.id] })
+  deleteBillById({ id: row.id })
     .then(() => {
       ElMessage({
         message: `删除成功!`,
@@ -147,25 +154,43 @@ function onDelete(row: CustomerApi.Customer) {
 }
 
 function onRefresh() {
+  gridApi.grid.clearRadioRow();
   gridApi.query();
 }
+
+const [CustomerListModal, customerListModalApi] = useVbenModal({
+  connectedComponent: CustomerList,
+  destroyOnClose: true,
+  centered: true,
+});
 </script>
 <template>
   <Page auto-content-height>
     <FormModel @success="onRefresh" />
-    <DetailModeal />
-    <Grid table-title="客户列表">
-      <template #gender="{ row }">
-        <ElTag :type="GenderMap[row.gender]?.color || 'danger'">
-          {{ GenderMap[row.gender]?.name || '未知' }}
-        </ElTag>
-      </template>
+    <CustomerListModal
+      @success="
+        (data: CustomerApi.Customer) => {
+          gridApi.formApi.setValues({
+            custName: data?.fullName || '',
+            custId: data?.id || '',
+          });
+        }
+      "
+    />
+    <Grid table-title="车辆信息列表">
       <template #toolbar-tools>
         <ElButtonGroup class="ml-4">
+          <ElButton type="primary" disabled>
+            <IconifyIcon
+              icon="fluent:apps-list-detail-20-regular"
+              class="size-5"
+              style="margin-right: 4px"
+            />
+            详情
+          </ElButton>
           <ElButton
             type="primary"
-            @click="onCreate"
-            v-if="rights.includes('新增')"
+            @click="() => formModelApi.setData({}).open()"
           >
             <IconifyIcon
               icon="ant-design:plus-outlined"
@@ -174,11 +199,7 @@ function onRefresh() {
             />
             新增
           </ElButton>
-          <ElButton
-            type="primary"
-            @click="handleUpdate"
-            v-if="rights.includes('修改')"
-          >
+          <ElButton type="primary" @click="handleUpdate">
             <IconifyIcon
               class="size-5"
               style="margin-right: 4px"
@@ -186,11 +207,7 @@ function onRefresh() {
             />
             修改
           </ElButton>
-          <ElButton
-            type="primary"
-            @click="deleteSelectRow"
-            v-if="rights.includes('删除')"
-          >
+          <ElButton type="primary" @click="deleteSelectRow">
             <IconifyIcon
               class="size-5"
               style="margin-right: 4px"
@@ -198,41 +215,41 @@ function onRefresh() {
             />
             删除
           </ElButton>
-          <ElButton
-            type="primary"
-            @click="detailSelectRow"
-            v-if="rights.includes('详情')"
-          >
+          <ElButton type="primary" disabled>
             <IconifyIcon
+              icon="mdi:selection-remove"
               class="size-5"
               style="margin-right: 4px"
-              icon="fluent:apps-list-detail-20-regular"
             />
-            详情
+            驳回
           </ElButton>
-          <ElButton type="primary" disabled v-if="rights.includes('下载')">
+          <ElButton type="primary" disabled>
             <IconifyIcon
+              icon="mdi:selection-remove"
               class="size-5"
               style="margin-right: 4px"
-              icon="material-symbols:download-rounded"
-            />
-            下载模板
+            />出库
           </ElButton>
-          <ElButton type="primary" disabled v-if="rights.includes('下载')">
+          <ElButton type="primary" disabled>
             <IconifyIcon
+              icon="mdi:selection-remove"
               class="size-5"
               style="margin-right: 4px"
-              icon="material-symbols-light:download"
-            />
-            下载数据
+            />下载
           </ElButton>
-          <ElButton type="primary" disabled v-if="rights.includes('上传')">
+          <ElButton type="primary" disabled>
             <IconifyIcon
+              icon="mdi:selection-remove"
               class="size-5"
               style="margin-right: 4px"
-              icon="material-symbols:upload-rounded"
-            />
-            上传数据
+            />取消订单
+          </ElButton>
+          <ElButton type="primary" disabled>
+            <IconifyIcon
+              icon="mdi:selection-remove"
+              class="size-5"
+              style="margin-right: 4px"
+            />收款
           </ElButton>
         </ElButtonGroup>
       </template>

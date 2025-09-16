@@ -130,12 +130,52 @@ function getBillAndSubListByMainId(mainId: number) {
   );
 }
 
+/**
+ * 审核销售单
+ */
+async function approveBill(data: any) {
+  return requestClient.post(
+    `/sale/approveSm?mainId=${data.mainId}&version=${data.version}`,
+  );
+}
+
+/**
+ * 驳回销售单
+ */
+async function rejectBill(data: any) {
+  return requestClient.post(
+    `/sale/rejectSm?mainId=${data.mainId}&version=${data.version}`,
+  );
+}
+
+/**
+ * 取消销售单
+ */
+async function cancelBill(data: any) {
+  return requestClient.post(
+    `/sale/cancelSm?mainId=${data.mainId}&version=${data.version}`,
+  );
+}
+
+/**
+ * 出库销售单
+ */
+async function outboundBill(data: any) {
+  return requestClient.post(
+    `/sale/outboundSm?mainId=${data.mainId}&version=${data.version}`,
+  );
+}
+
 export {
+  approveBill,
+  cancelBill,
   createBill,
   deleteBillById,
   getBill,
   getBillAndSubListByMainId,
   getBillCode,
   getBillList,
+  outboundBill,
+  rejectBill,
   updateBill,
 };

@@ -150,10 +150,6 @@ const [Grid, gridApi] = useVbenVxeGrid<BillSubApi.BalanceEntity>({
         width: 220,
         sortable: true,
       },
-      // {
-      //   field: 'code',
-      //   title: '属性',
-      // },
       {
         field: 'productPlaceName',
         title: '产地',

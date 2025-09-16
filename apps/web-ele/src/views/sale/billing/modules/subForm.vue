@@ -139,28 +139,6 @@ const [Form, formApi] = useVbenForm({
         placeholder: '请输入成本价',
       },
     },
-    // {
-    //   component: 'Checkbox',
-    //   fieldName: 'isDefault',
-    //   label: '默认库位',
-    //   componentProps: {
-    //     placeholder: '请选择',
-    //   },
-    // },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'productPlaceName',
-    //   componentProps: {
-    //     type: 'hidden',
-    //   },
-    // },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'storeName',
-    //   componentProps: {
-    //     type: 'hidden',
-    //   },
-    // },
   ],
   showDefaultActions: false,
   // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个

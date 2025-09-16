@@ -170,7 +170,7 @@ const [SubFormModal, subFormModalApi] = useVbenModal({
         />
         新增明细
       </ElButton>
-      <ElButton type="primary" @click="editSelectRow">
+      <ElButton type="primary" @click="handleUpdate">
         <IconifyIcon
           class="size-5"
           style="margin-right: 4px"

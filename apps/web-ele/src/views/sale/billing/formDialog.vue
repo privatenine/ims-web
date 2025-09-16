@@ -16,125 +16,172 @@
     >
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-form-item label="供应商" prop="supplierId">
+          <el-form-item label="单号" prop="code">
+            <el-input v-model="form.code" placeholder="系统自动生成" disabled />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="客户名称" prop="custId">
             <el-input
-              v-model="form.supplierName"
-              placeholder="请选择供应商"
+              v-model="form.custName"
+              placeholder="点击选择客户"
               readonly
               clearable
-              @click="openSupplierDialog"
+              @click="openCustomerDialog"
             >
               <template #append>
-                <el-button @click="openSupplierDialog">选择供应商</el-button>
+                <el-button @click="openCustomerDialog">选择客户</el-button>
               </template>
             </el-input>
           </el-form-item>
         </el-col>
-
         <el-col :span="8">
-          <el-form-item label="单号" prop="code">
-            <el-input v-model="form.code" disabled readonly />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item label="到货方式" prop="arrivalId">
-            <el-select
-              v-model="form.arrivalId"
-              placeholder="请选择"
+          <el-form-item label="下单日期" prop="orderTime">
+            <el-date-picker
+              v-model="form.orderTime"
+              type="date"
+              placeholder="选择下单日期"
               clearable
-              @change="handleArrivalChange"
-            >
-              <el-option
-                v-for="item in arrivalOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item label="提货车牌" prop="pickUpCarId">
-            <el-select
-              v-model="form.pickUpCarId"
-              placeholder="请选择"
-              clearable
-            >
-              <el-option
-                v-for="item in carOptions"
-                :key="item.id"
-                :label="item.carNum"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item label="卸货方式" prop="unloadingId">
-            <el-select
-              v-model="form.unloadingId"
-              placeholder="请选择"
-              clearable
-              @change="handleUnloadingChange"
-            >
-              <el-option
-                v-for="item in unloadingOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item label="金额" prop="totalMoney">
-            <el-input-number
-              v-model="form.totalMoney"
-              :readonly="true"
-              :disabled="true"
               style="width: 100%"
             />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item label="数量" prop="totalNum">
-            <el-input-number
-              v-model="form.totalNum"
-              :readonly="true"
-              :disabled="true"
-              style="width: 100%"
-            />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="24">
-          <el-form-item label="备注" prop="remark" class="col-span-4">
-            <el-input
-              v-model="form.remark"
-              type="textarea"
-              placeholder="请输入备注"
-              :clearable="true"
-            />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="0">
-          <el-form-item prop="supplierId">
-            <el-input v-model="form.supplierId" type="hidden" />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="0">
-          <el-form-item prop="id">
-            <el-input v-model="form.id" type="hidden" />
           </el-form-item>
         </el-col>
       </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <el-form-item label="业务类型" prop="businessType">
+            <el-select
+              v-model="form.businessType"
+              placeholder="请选择业务类型"
+              clearable
+              style="width: 100%"
+            >
+              <el-option label="零售" :value="122" />
+              <el-option label="批发" :value="123" />
+              <el-option label="其它" :value="124" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="配送类型" prop="distribution">
+            <el-select
+              v-model="form.distribution"
+              placeholder="请选择配送类型"
+              clearable
+              style="width: 100%"
+            >
+              <el-option label="自提" :value="125" />
+              <el-option label="送货" :value="126" />
+              <el-option label="物流发货" :value="127" />
+              <el-option label="安装" :value="128" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="业务员" prop="createName">
+            <el-input
+              v-model="form.createName"
+              placeholder="点击选择业务员"
+              readonly
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <el-form-item label="总数量" prop="totalNum">
+            <el-input-number
+              v-model="form.totalNum"
+              disabled
+              :precision="0"
+              :min="0"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="总金额" prop="totalMoney">
+            <el-input-number
+              v-model="form.totalMoney"
+              disabled
+              :precision="2"
+              :min="0"
+              :formatter="
+                (value: number) =>
+                  `¥ ${value}`.replaceAll(/\B(?=(\d{3})+(?!\d))/g, ',')
+              "
+              :parser="(value: string) => value.replaceAll(/¥\s?|(,*)/g, '')"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="优惠金额" prop="discountMoney">
+            <el-input-number
+              v-model="form.discountMoney"
+              :precision="2"
+              :min="0"
+              placeholder="输入优惠金额"
+              :formatter="
+                (value: number) =>
+                  `¥ ${value}`.replaceAll(/\B(?=(\d{3})+(?!\d))/g, ',')
+              "
+              :parser="(value: string) => value.replaceAll(/¥\s?|(,*)/g, '')"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <el-form-item label="收货地址" prop="receiveAddress">
+            <el-input
+              v-model="form.receiveAddress"
+              placeholder="请输入收货地址"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="收货人" prop="receiveName">
+            <el-input
+              v-model="form.receiveName"
+              placeholder="请输入收货人姓名"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="联系电话" prop="receivePhone">
+            <el-input
+              v-model="form.receivePhone"
+              placeholder="请输入联系电话"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <el-form-item label="备注信息" prop="remark">
+            <el-input
+              v-model="form.remark"
+              type="textarea"
+              placeholder="请输入备注信息"
+              :rows="3"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <!-- 隐藏字段 -->
+      <el-form-item prop="custId" style="display: none">
+        <el-input v-model="form.custId" type="hidden" />
+      </el-form-item>
+      <el-form-item prop="createId" style="display: none">
+        <el-input v-model="form.createId" type="hidden" />
+      </el-form-item>
     </el-form>
 
     <ElButtonGroup class="ml-4">
@@ -154,19 +201,7 @@
         />
         提交
       </ElButton>
-      <ElButton type="primary" disabled v-if="rights?.includes('采购明细')">
-        <IconifyIcon
-          class="size-5"
-          style="margin-right: 4px"
-          icon="ant-design:plus-outlined"
-        />
-        采购入库
-      </ElButton>
-      <ElButton
-        type="primary"
-        @click="openSub"
-        v-if="rights.includes('新增明细')"
-      >
+      <ElButton type="primary" @click="openSub">
         <IconifyIcon
           class="size-5"
           style="margin-right: 4px"
@@ -174,11 +209,7 @@
         />
         新增明细
       </ElButton>
-      <ElButton
-        type="primary"
-        @click="handleEdit"
-        v-if="rights.includes('修改明细')"
-      >
+      <ElButton type="primary" @click="handleEdit">
         <IconifyIcon
           icon="line-md:edit-twotone"
           class="size-5"
@@ -186,11 +217,7 @@
         />
         修改明细
       </ElButton>
-      <ElButton
-        type="primary"
-        @click="handleDelete"
-        v-if="rights.includes('删除明细')"
-      >
+      <ElButton type="primary" @click="handleDelete">
         <IconifyIcon
           icon="mdi:trash-can-outline"
           class="size-5"
@@ -246,11 +273,11 @@
       />
     </div>
 
-    <ProductSelectDialog
-      v-model:visible="productSelectDialogVis"
+    <StorageSelectDialog
+      v-model:visible="storageSelectDialogVis"
       :form-data="formData"
-      @close="productSelectDialogVis = false"
-      @confirm="productConfirm"
+      @close="storageSelectDialogVis = false"
+      @confirm="storageConfirm"
     />
     <subFormDialog
       v-model:visible="subformDialogVis"
@@ -259,10 +286,10 @@
       @confirm="subConfirm"
     />
 
-    <!-- 添加: 供应商选择弹框 -->
-    <SupplierSelectDialog
+    <!-- 添加: 客户选择弹框 -->
+    <CustomerSelectDialog
       v-model:visible="supplierSelectDialogVis"
-      @confirm="handleSupplierSelect"
+      @confirm="handleCustomerSelect"
       @close="supplierSelectDialogVis = false"
     />
   </el-dialog>
@@ -272,31 +299,27 @@
 import type { FormInstance, FormRules } from 'element-plus';
 
 import { computed, onMounted, reactive, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { IconifyIcon } from '@vben/icons';
 
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 import {
-  createInStorage,
-  deleteInStorageSubById,
-  getCarList,
-  getInStorageSubByMainId,
-  updateInStorage,
+  createBill,
+  deleteBillSubById,
+  getBillSubList,
+  updateBill,
 } from '#/api';
-import ProductSelectDialog from '#/components/ProductSelectDialog.vue';
-// 添加: 导入供应商选择弹框组件
-import SupplierSelectDialog from '#/components/SupplierSelectDialog.vue';
-import { useMenuRights } from '#/utils';
+
+// 添加: 导入客户选择弹框组件
+import CustomerSelectDialog from '#/components/CustomerSelectDialog.vue';
+import StorageSelectDialog from '#/components/StorageSelectDialog.vue';
 
 import subFormDialog from './subFormDialog.vue';
 
 const props = defineProps(['visible', 'formData']);
 
 const emit = defineEmits(['update:visible', 'confirm', 'cancel']);
-
-const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
 
 const vis = ref(false);
 const formRef = ref<FormInstance>();
@@ -308,16 +331,26 @@ const queryParams = reactive({
 });
 const total = ref(0);
 
+// 获取用户信息
+const userInfoStr = localStorage.getItem('userInfo');
+const nUserInfo = userInfoStr ? JSON.parse(userInfoStr) : {};
+
 // 表单数据
 const form = ref({
-  supplierId: '',
-  supplierName: '',
+  custId: '',
+  custName: '',
   code: '',
-  arrivalId: undefined,
-  pickUpCarId: undefined,
-  unloadingId: undefined,
+  orderTime: new Date(),
+  businessType: undefined,
+  distribution: undefined,
+  createName: nUserInfo.realName || '',
+  createId: nUserInfo.id || '',
   totalMoney: 0,
   totalNum: 0,
+  discountMoney: 0,
+  receiveAddress: '',
+  receiveName: '',
+  receivePhone: '',
   remark: '',
   id: '',
   statusFlag: undefined,
@@ -325,8 +358,12 @@ const form = ref({
 
 // 表单验证规则
 const rules = ref<FormRules>({
-  supplierId: [
-    { required: true, message: '供应商不能为空', trigger: 'change' },
+  custId: [{ required: true, message: '客户不能为空', trigger: 'change' }],
+  businessType: [
+    { required: true, message: '业务类型不能为空', trigger: 'change' },
+  ],
+  distribution: [
+    { required: true, message: '配送类型不能为空', trigger: 'change' },
   ],
 });
 
@@ -343,19 +380,8 @@ const unloadingOptions = [
   { label: '人工', value: 2 },
 ];
 
-// 提货车牌选项
-const carOptions = ref<Array<any>>([]);
-
-// 获取提货车牌选项
-const getCarOptions = async () => {
-  const res = await getCarList();
-  carOptions.value = res.data;
-};
-
 // 初始化数据
-onMounted(() => {
-  getCarOptions();
-});
+onMounted(() => {});
 
 // 同步外部visible属性到内部vis
 watch(
@@ -369,18 +395,25 @@ watch(
         form.value = { ...props.formData };
         form.value.totalMoney = form.value.totalMoney || 0;
         form.value.totalNum = form.value.totalNum || 0;
+        form.value.discountMoney = form.value.discountMoney || 0;
       } else {
         // 重置表单
         formRef.value?.resetFields();
         form.value = {
-          supplierId: '',
-          supplierName: '',
+          custId: '',
+          custName: '',
           code: '',
-          arrivalId: undefined,
-          pickUpCarId: undefined,
-          unloadingId: undefined,
+          orderTime: new Date(),
+          businessType: undefined,
+          distribution: undefined,
+          createName: nUserInfo.realName || '',
+          createId: nUserInfo.id || '',
           totalMoney: 0,
           totalNum: 0,
+          discountMoney: 0,
+          receiveAddress: '',
+          receiveName: '',
+          receivePhone: '',
           remark: '',
           id: '',
           statusFlag: undefined,
@@ -399,7 +432,7 @@ watch(vis, (newVal) => {
 });
 
 const title = computed(() => {
-  return `${props.formData?.id ? '修改' : '新增'}入库`;
+  return `${props.formData?.id ? '修改' : '新增'}销售开单`;
 });
 
 const saveLoading = ref(false);
@@ -413,8 +446,8 @@ async function save(statusFlag: number) {
 
   saveLoading.value = true;
   (tableData.value?.length === 0
-    ? createInStorage(Object.assign({}, form.value, { statusFlag }))
-    : updateInStorage(
+    ? createBill(Object.assign({}, form.value, { statusFlag }))
+    : updateBill(
         Object.assign({}, form.value, { statusFlag, id: form.value.id }),
       )
   )
@@ -451,8 +484,8 @@ const handleRowDblClick = (row: any) => {
 };
 
 const getSubList = async () => {
-  const p = Object.assign({}, queryParams, { warehousingId: form.value.id });
-  const res = await getInStorageSubByMainId(p);
+  const p = Object.assign({}, queryParams, { saleId: form.value.id });
+  const res = await getBillSubList(p);
   tableData.value = res.data;
   total.value = res.total;
   selectedRowId.value = '';
@@ -472,49 +505,51 @@ const handleClose = () => {
   emit('cancel');
 };
 
-const productSelectDialogVis = ref(false);
+const storageSelectDialogVis = ref(false);
 // 打开子表单
 const openSub = () => {
   // 打开新增明细的逻辑
-  if (!form.value.supplierId) {
+  if (!form.value.custId) {
     ElMessage({
-      message: `请选择供应商`,
+      message: `请选择客户`,
       type: 'warning',
       plain: true,
     });
     return;
   }
   // 打开对话框
-  productSelectDialogVis.value = true;
+  storageSelectDialogVis.value = true;
 };
 
-// 添加: 供应商选择弹框相关
+// 添加: 客户选择弹框相关
 const supplierSelectDialogVis = ref(false);
-const openSupplierDialog = () => {
+const openCustomerDialog = () => {
   supplierSelectDialogVis.value = true;
 };
 
-// 添加: 处理供应商选择确认
-const handleSupplierSelect = (row: any) => {
+// 添加: 处理客户选择确认
+const handleCustomerSelect = (row: any) => {
   if (row) {
-    form.value.supplierId = row.id;
-    form.value.supplierName = row.fullName;
+    form.value.custId = row.id;
+    form.value.custName = row.fullName;
   }
   supplierSelectDialogVis.value = false;
 };
 
 const subformDialogVis = ref(false);
 const subformData = ref({});
-const productConfirm = (data) => {
+const storageConfirm = (data) => {
   // 新增明细选择产品
   subformData.value = Object.assign(data, {
-    addWarehousingMainParam: form.value,
+    id: undefined,
+    balanceId: data.id,
+    addSaleMainParam: form.value,
   });
   subformDialogVis.value = true;
 };
 const subConfirm = (data) => {
   // 当入库和明细都是新增时，新增明细传id:0,接口返回时会同时创建明细和入库id
-  form.value.id = form.value.id || data.warehousingId;
+  form.value.id = form.value.id || data.saleId;
   getSubList();
 };
 
@@ -529,7 +564,7 @@ const handleEdit = () => {
     return;
   }
   subformData.value = Object.assign(selectedRow.value, {
-    addWarehousingMainParam: form.value,
+    addSaleMainParam: form.value,
   });
   subformDialogVis.value = true;
 };
@@ -550,7 +585,7 @@ const handleDelete = () => {
     type: 'warning',
   })
     .then(() => {
-      deleteInStorageSubById({ id: selectedRowId.value }).then((res) => {
+      deleteBillSubById({ id: selectedRowId.value }).then((res) => {
         ElMessage({
           message: `删除成功`,
           type: 'success',

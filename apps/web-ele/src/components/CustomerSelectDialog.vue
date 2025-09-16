@@ -2,7 +2,7 @@
   <el-dialog
     class="form-dialog"
     v-model="vis"
-    title="选择供应商"
+    title="选择客户"
     width="1000"
     append-to-body
     draggable
@@ -13,16 +13,16 @@
       <el-form :model="queryParams" inline label-width="100px" class="mb-4">
         <el-form-item label="简拼码">
           <el-input
-            v-model="queryParams.simpleCode"
+            v-model="queryParams.shortName"
             placeholder="请输入简拼码"
             clearable
             @keyup.enter="handleSearch"
           />
         </el-form-item>
-        <el-form-item label="供应商名称">
+        <el-form-item label="客户名称">
           <el-input
             v-model="queryParams.fullName"
-            placeholder="请输入供应商名称"
+            placeholder="请输入客户名称"
             clearable
             @keyup.enter="handleSearch"
           />
@@ -33,7 +33,7 @@
         </el-form-item>
       </el-form>
 
-      <!-- 供应商列表 -->
+      <!-- 客户列表 -->
       <el-table
         :data="tableList"
         ref="tableRef"
@@ -50,9 +50,13 @@
           </template>
         </el-table-column>
         <el-table-column type="index" label="序号" width="60" />
-        <el-table-column prop="fullName" label="供应商名称" />
-        <el-table-column prop="simpleCode" label="简拼码" />
-        <el-table-column prop="address" label="供应商地址" />
+        <el-table-column prop="fullName" label="客户名称" width="160" />
+        <el-table-column prop="shortName" label="简拼码" width="220" />
+        <el-table-column prop="address" label="客户地址" width="220" />
+        <el-table-column prop="priceLevel" label="价格级别" width="100" />
+        <el-table-column prop="fax" label="传真" width="160" />
+        <el-table-column prop="mobilePhone" label="电话" width="160" />
+        <el-table-column prop="telephone" label="手机" width="100" />
       </el-table>
       <div class="pagination-container mt-4">
         <el-pagination
@@ -86,7 +90,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
-import { getSupplierList } from '#/api';
+import { getCustomerList } from '#/api';
 
 const props = defineProps(['visible']);
 const emit = defineEmits(['update:visible', 'confirm', 'close']);
@@ -100,11 +104,11 @@ const selectedId = ref('');
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 20,
-  simpleCode: '',
+  shortName: '',
   fullName: '',
 });
 
-// 计算选中的供应商
+// 计算选中的客户
 const selectedSupplier = computed(() => {
   return tableList.value.find((item) => item.id === selectedId.value);
 });
@@ -129,9 +133,9 @@ watch(vis, (newVal) => {
   emit('update:visible', newVal);
 });
 
-// 获取供应商列表数据
+// 获取客户列表数据
 const getSupplierData = async () => {
-  const res = await getSupplierList(queryParams);
+  const res = await getCustomerList(queryParams);
   tableList.value = res.data;
   total.value = res.total;
 };
@@ -144,7 +148,7 @@ const handleSearch = () => {
 
 // 重置查询条件
 const resetQuery = () => {
-  queryParams.simpleCode = '';
+  queryParams.shortName = '';
   queryParams.fullName = '';
   queryParams.pageNum = 1;
   getSupplierData();

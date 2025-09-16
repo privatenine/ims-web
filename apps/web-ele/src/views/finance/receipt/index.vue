@@ -128,7 +128,7 @@ function onDelete(row: ReceiptApi.Receipt) {
       hideLoading.close();
     });
 }
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: ReceiptApi.Receipt | undefined) => void,
   );
@@ -182,7 +182,7 @@ function detailSelectRow() {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon

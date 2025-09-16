@@ -1,5 +1,116 @@
 $longQueryWidth: 352px;
 
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+/* 水平方向-水平垂直居中 */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 垂直方向-水平垂直居中 */
+.flex-center-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 垂直方向-垂直居中 */
+.flex-column-c {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 水平方向-垂直居中 */
+.flex-vertical-center {
+  display: flex;
+  align-items: center;
+}
+
+/* 行内水平方向-垂直居中 */
+.inlineflex-vertical-center {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 水平反方向-垂直居中 */
+.flex-reverse-vertical {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 垂直方向-水平居中 */
+.flex-center-horizontal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flex1{
+  flex: 1
+}
+
+.flex-g {
+  flex-grow: 1;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.text-maxline-all {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+/* 文本最多显示两行，超出显示省略号 */
+.text-maxline-3 {
+  @extend .text-maxline-base;
+  -webkit-line-clamp: 3;
+}
+
+/* 文本最多显示两行，超出显示省略号 */
+.text-maxline-2 {
+  @extend .text-maxline-base;
+  -webkit-line-clamp: 2;
+}
+
+/* 文本最多显示一行，超出显示省略号 */
+.text-maxline-1 {
+  @extend .text-maxline-base;
+  -webkit-line-clamp: 1;
+}
+
+.text-maxline-base {
+  display: -webkit-box;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  /*! autoprefixer  : ignore next */
+  -webkit-box-orient: vertical;
+}
+
 // 列表页公共样式
 .query-form-container {
   padding: 10px 8px;

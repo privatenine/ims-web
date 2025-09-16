@@ -107,7 +107,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeGridListeners<EmployeeApi.EmployeeVo>,
 });
 
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: EmployeeApi.EmployeeVo | undefined) => void,
   );
@@ -231,7 +231,7 @@ function uptEmployeeAuthorize(isLocked: boolean = false) {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon

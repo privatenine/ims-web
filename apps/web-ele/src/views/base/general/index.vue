@@ -160,7 +160,7 @@
         </ElButton>
         <ElButton
           type="primary"
-          @click="editSelectRow"
+          @click="handleUpdate"
           v-if="rights.includes('修改')"
         >
           <IconifyIcon
@@ -484,7 +484,7 @@ const handleAdd = () => {
   formDialogVis.value = true;
 };
 
-function editSelectRow() {
+function handleUpdate() {
   if (!selectedRow.value?.dataId) {
     ElMessage({
       message: `请选择一条数据!`,

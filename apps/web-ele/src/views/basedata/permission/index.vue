@@ -91,7 +91,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeGridListeners<BasicRoleApi.Role>,
 });
 
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())((row) =>
     formModelApi.setData(row).open(),
   );
@@ -155,7 +155,7 @@ const [FormModel, formModelApi] = useVbenModal({
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改角色')"
           >
             <IconifyIcon

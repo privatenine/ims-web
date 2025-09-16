@@ -63,7 +63,7 @@
           />
           新增
         </ElButton>
-        <ElButton type="primary" @click="editSelectRow">
+        <ElButton type="primary" @click="handleUpdate">
           <IconifyIcon
             icon="line-md:edit-twotone"
             class="size-5"
@@ -246,7 +246,7 @@ const handleAdd = () => {
   formDialogVis.value = true;
 };
 
-function editSelectRow() {
+function handleUpdate() {
   if (!selectedRow.value?.id) {
     ElMessage({
       message: `请选择一条数据!`,

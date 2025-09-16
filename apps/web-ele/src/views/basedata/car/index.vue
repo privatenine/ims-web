@@ -95,7 +95,7 @@ const [Grid, gridApi] = useVbenVxeGrid<CarApi.Car>({
 //   gridApi.updateGridFormSchema();
 // });
 
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: CarApi.Car | undefined) => void,
   );
@@ -160,7 +160,7 @@ function onCreate() {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon

@@ -246,7 +246,7 @@ export function useReturnLogic() {
   }
 
   // 编辑选中行
-  function editSelectRow(formModelApi: any) {
+  function handleUpdate(formModelApi: any) {
     const selectData = gridApi.grid.getRadioRecord();
     useSelectedRow(selectData)((row) => {
       if (row.statusFlag !== 1 && row.statusFlag !== 4) {
@@ -395,7 +395,7 @@ export function useReturnLogic() {
     onSearch,
     handleSupplierSelect,
     deleteSelectRow,
-    editSelectRow,
+    handleUpdate,
     onCreate,
     openDetail,
     openAudit,

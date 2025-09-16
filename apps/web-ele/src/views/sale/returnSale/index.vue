@@ -108,7 +108,7 @@ const [Grid, gridApi] = useVbenVxeGrid<ReturnSaleApi.ReturnSale>({
 //   gridApi.updateGridFormSchema();
 // });
 
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: ReturnSaleApi.ReturnSale | undefined) => void,
   );
@@ -167,7 +167,7 @@ function onCreate() {
             />
             新增
           </ElButton>
-          <ElButton type="primary" @click="editSelectRow">
+          <ElButton type="primary" @click="handleUpdate">
             <IconifyIcon
               class="size-5"
               style="margin-right: 4px"

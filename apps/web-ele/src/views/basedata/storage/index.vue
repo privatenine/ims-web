@@ -131,7 +131,7 @@ function onRefresh() {
 //     });
 // }
 
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: StorageApi.Storage | undefined) => void,
   );
@@ -172,7 +172,7 @@ function editSelectRowStatus() {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon
@@ -184,7 +184,7 @@ function editSelectRowStatus() {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('删除')"
             disabled
           >

@@ -91,7 +91,7 @@
         </ElButton>
         <ElButton
           type="primary"
-          @click="editSelectRow"
+          @click="handleUpdate"
           v-if="rights.includes('修改')"
         >
           <IconifyIcon
@@ -305,9 +305,20 @@
       @confirm="handleFormDialogConfirm"
     />
 
-    <DetailModel />
+    <!-- 添加详情弹框组件 -->
+    <DetailDialog
+      v-model:visible="detailDialogVis"
+      :form-data="detailFormData"
+      @close="detailDialogVis = false"
+    />
+    <ApproveDialog
+      v-model:visible="approveDialogVis"
+      :form-data="approveFormData"
+      @close="approveDialogVis = false"
+      @success="handleQuery"
+    />
+
     <DetailPrintModel />
-    <approveModel @success="handleQuery" />
     <StoreFormModel @success="handleQuery" />
     <SettlementFormModel @success="handleQuery" />
   </div>
@@ -316,7 +327,14 @@
 <script setup lang="ts">
 import type { CarApi } from '#/api';
 
-import { computed, onMounted, reactive, ref } from 'vue';
+import {
+  computed,
+  onActivated,
+  onDeactivated,
+  onMounted,
+  reactive,
+  ref,
+} from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useVbenModal } from '@vben/common-ui';
@@ -333,8 +351,8 @@ import {
 } from '#/api';
 import { statusFlagMap, unloadingMap, useMenuRights } from '#/utils';
 
-import approveDialog from './approveDialog.vue';
-import Detail from './detail.vue';
+import ApproveDialog from './approveDialog.vue';
+import DetailDialog from './detailDialog.vue';
 import DetailPrintDialog from './detailPrintDialog.vue';
 import formDialog from './formDialog.vue';
 import SettlementFormDialog from './settlementFormDialog.vue';
@@ -348,15 +366,26 @@ onMounted(() => {
   getCarOptions();
 });
 
+onActivated(() => {});
+
+onDeactivated(() => {});
+
 const formDialogVis = ref(false);
 const formData = ref({});
+
+// 添加详情弹框相关的变量
+const detailDialogVis = ref(false);
+const detailFormData = ref({});
+
+// 添加审批弹框相关的变量
+const approveDialogVis = ref(false);
+const approveFormData = ref({});
 
 // 添加选中行的ID
 const selectedRowId = ref('');
 const selectedRow = computed(() => {
   return tableData.value.find((row: any) => row.id === selectedRowId.value);
 });
-
 // 添加处理行点击的函数
 const handleRowClick = (row: any) => {
   selectedRowId.value = row.id;
@@ -407,6 +436,7 @@ const handleReset = () => {
   });
   queryParams.dateRange = [];
   queryParams.pageNum = 1;
+  queryParams.pageSize = 20;
   getList();
 };
 
@@ -442,7 +472,7 @@ const handleAdd = () => {
   });
 };
 
-function editSelectRow() {
+function handleUpdate() {
   if (!selectedRow.value?.id) {
     ElMessage({
       message: `请选择一条数据!`,
@@ -463,11 +493,6 @@ function editSelectRow() {
   formDialogVis.value = true;
 }
 
-const [approveModel, approveModelApi] = useVbenModal({
-  connectedComponent: approveDialog,
-  destroyOnClose: true,
-  centered: true,
-});
 function handleApprove() {
   if (!selectedRow.value?.id) {
     ElMessage({
@@ -485,14 +510,10 @@ function handleApprove() {
     });
     return;
   }
-  approveModelApi.setData(selectedRow.value).open();
+  approveFormData.value = selectedRow.value;
+  approveDialogVis.value = true;
 }
 
-const [DetailModel, detailModelApi] = useVbenModal({
-  connectedComponent: Detail,
-  destroyOnClose: true,
-  centered: true,
-});
 function openDetail() {
   if (!selectedRow.value?.id) {
     ElMessage({
@@ -502,7 +523,8 @@ function openDetail() {
     });
     return;
   }
-  detailModelApi.setData(selectedRow.value).open();
+  detailFormData.value = selectedRow.value;
+  detailDialogVis.value = true;
 }
 
 const [StoreFormModel, storeFormModelApi] = useVbenModal({

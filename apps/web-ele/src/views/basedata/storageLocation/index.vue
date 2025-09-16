@@ -102,7 +102,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   } as VxeGridListeners<StorageLocationApi.StorageLocation>,
 });
-function editSelectRow() {
+function handleUpdate() {
   useSelectedRow(gridApi.grid.getRadioRecord())(
     onEdit as (data: StorageLocationApi.StorageLocation | undefined) => void,
   );
@@ -175,7 +175,7 @@ function selectData(data: Record<string, any>) {
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon

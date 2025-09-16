@@ -204,7 +204,7 @@ function onCreate() {
       .open();
   });
 }
-function editSelectRow() {
+function handleUpdate() {
   const selectData = gridApi.grid.getRadioRecord();
   useSelectedRow(selectData)((row) => {
     if (![1, 5].includes(row.statusFlag)) {
@@ -377,7 +377,7 @@ const [SettlementFormModel, settlementFormModelApi] = useVbenModal({
           </ElButton>
           <ElButton
             type="primary"
-            @click="editSelectRow"
+            @click="handleUpdate"
             v-if="rights.includes('修改')"
           >
             <IconifyIcon
