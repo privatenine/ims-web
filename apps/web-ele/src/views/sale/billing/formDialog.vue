@@ -310,7 +310,6 @@ import {
   getBillSubList,
   updateBill,
 } from '#/api';
-
 // 添加: 导入客户选择弹框组件
 import CustomerSelectDialog from '#/components/CustomerSelectDialog.vue';
 import StorageSelectDialog from '#/components/StorageSelectDialog.vue';
@@ -391,6 +390,7 @@ watch(
     if (newVal) {
       // 当对话框打开时，初始化表单数据
       selectedRowId.value = '';
+      tableData.value = [];
       if (props.formData) {
         form.value = { ...props.formData };
         form.value.totalMoney = form.value.totalMoney || 0;

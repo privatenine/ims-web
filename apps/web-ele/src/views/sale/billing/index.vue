@@ -167,6 +167,37 @@
             style="margin-right: 4px"
           />收款
         </ElButton>
+        <ElDropdown type="primary">
+          <ElButton type="primary">
+            <IconifyIcon
+              class="size-5"
+              style="margin-right: 4px"
+              icon="material-symbols:print-outline-rounded"
+            />
+            打印
+            <IconifyIcon
+              class="size-5"
+              style="margin-left: 4px"
+              icon="mdi:chevron-down"
+            />
+          </ElButton>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <ElDropdownItem @click="handlePrint('normal')">
+                普通单据
+              </ElDropdownItem>
+              <ElDropdownItem @click="handlePrint('noPlace')">
+                无产地单据
+              </ElDropdownItem>
+              <ElDropdownItem @click="handlePrint('noPrice')">
+                无价格单据
+              </ElDropdownItem>
+              <ElDropdownItem @click="handlePrint('whole')">
+                整单标签
+              </ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
       </ElButtonGroup>
     </div>
     <!-- 分页列表 -->
@@ -253,6 +284,15 @@
       :form-data="detailFormData"
       @close="detailDialogVis = false"
     />
+
+    <!-- 添加打印预览弹框组件 -->
+    <printDialog
+      v-model:visible="printDialogVis"
+      :form-data="printData"
+      :mode="printMode"
+      :skip-num="printSkipNum"
+      @close="printDialogVis = false"
+    />
   </div>
 </template>
 
@@ -276,6 +316,8 @@ import {
 
 import DetailDialog from './detailDialog.vue';
 import formDialog from './formDialog.vue';
+// 添加引入打印预览对话框组件
+import printDialog from './printDialog.vue';
 
 // 获取用户信息
 const userInfoStr = localStorage.getItem('userInfo');
@@ -312,6 +354,12 @@ const formData = ref({});
 // 添加详情弹框相关的变量
 const detailDialogVis = ref(false);
 const detailFormData = ref({});
+
+// 添加打印弹框相关的变量
+const printDialogVis = ref(false);
+const printData = ref({});
+const printMode = ref('');
+const printSkipNum = ref(0);
 
 // 添加选中行的ID
 const selectedRowId = ref('');
@@ -627,7 +675,35 @@ function handleCancelBill() {
     })
     .catch(() => {});
 }
-
+function handlePrint(mode) {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  if (mode === 'whole') {
+    ElMessageBox.prompt('请输入打印标签要跳过的个数(不填写则不跳过)', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputPattern: /^$|^[1-9]\d*$/,
+      inputErrorMessage: '请输入正整数或留空',
+    })
+      .then(({ value }) => {
+        printSkipNum.value = Number(value) || 0;
+        printMode.value = mode;
+        printData.value = selectedRow.value;
+        printDialogVis.value = true;
+      })
+      .catch(() => {});
+  } else {
+    printMode.value = mode;
+    printData.value = selectedRow.value;
+    printDialogVis.value = true;
+  }
+}
 function handleOutboundBill() {
   if (!selectedRow.value?.id) {
     ElMessage({

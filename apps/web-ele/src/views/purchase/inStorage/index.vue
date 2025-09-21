@@ -194,7 +194,7 @@
             <IconifyIcon
               class="size-5"
               style="margin-right: 4px"
-              icon="fluent:select-all-on-20-regular"
+              icon="material-symbols:print-outline-rounded"
             />
             打印
             <IconifyIcon
