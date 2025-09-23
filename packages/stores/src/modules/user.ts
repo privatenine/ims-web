@@ -33,6 +33,10 @@ interface AccessState {
    * 用户角色
    */
   userRoles: string[];
+  /**
+   * 用户系统设置
+   */
+  userSysSettings: null | Record<string, any>;
 }
 
 /**
@@ -50,10 +54,15 @@ export const useUserStore = defineStore('core-user', {
     setUserRoles(roles: string[]) {
       this.userRoles = roles;
     },
+    setUserSysSettings(settings: null | Record<string, any>) {
+      // 设置用户系统设置
+      this.userSysSettings = settings;
+    },
   },
   state: (): AccessState => ({
     userInfo: null,
     userRoles: [],
+    userSysSettings: null,
   }),
 });
 

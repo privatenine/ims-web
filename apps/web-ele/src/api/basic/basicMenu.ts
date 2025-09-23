@@ -45,3 +45,7 @@ export async function getMenuButtonRightsByPath(path: string) {
     `/login/getMenuByPath?path=${path}`,
   );
 }
+
+export async function findUserSysSettings() {
+  return requestClient.get<any>(`/login/findUserSysSettings`);
+}

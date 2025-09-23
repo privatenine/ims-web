@@ -10,7 +10,13 @@ import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 import { ElNotification } from 'element-plus';
 import { defineStore } from 'pinia';
 
-import { getMenuList1, getUserInfoApi, loginApi, logoutApi } from '#/api';
+import {
+  findUserSysSettings,
+  getMenuList1,
+  getUserInfoApi,
+  loginApi,
+  logoutApi,
+} from '#/api';
 import { getStorageList } from '#/api/basic/storage';
 import { getEmployeeList } from '#/api/personnelMatters/employee';
 import { $t } from '#/locales';
@@ -73,6 +79,9 @@ export const useAuthStore = defineStore('auth', () => {
         userStore.setUserInfo(userInfo);
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
 
+        // 获取并缓存设置
+        await fetchUserSettings();
+
         // 获取并缓存仓库信息
         await fetchAndCacheStorageList();
 
@@ -119,6 +128,7 @@ export const useAuthStore = defineStore('auth', () => {
     // 清除缓存
     localStorage.removeItem('storageList');
     localStorage.removeItem('employeeList');
+    localStorage.removeItem('userSysSettings');
 
     // 回登录页带上当前路由地址
     await router.replace({
@@ -142,6 +152,17 @@ export const useAuthStore = defineStore('auth', () => {
     return await getMenuList1();
   }
 
+  async function fetchUserSettings() {
+    try {
+      const { data } = await findUserSysSettings();
+      if (data) {
+        userStore.setUserSysSettings(data);
+        localStorage.setItem('userSysSettings', JSON.stringify(data));
+      }
+    } catch (error) {
+      console.error('获取用户系统设置失败:', error);
+    }
+  }
   /**
    * 获取仓库信息并缓存到本地
    */
