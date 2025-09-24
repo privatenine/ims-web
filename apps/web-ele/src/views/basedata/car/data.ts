@@ -61,7 +61,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
     {
       component: 'Input',
       fieldName: 'carNum',
-      label: '车辆车牌',
+      label: '车牌号码',
       componentProps: {
         clearable: true,
       },
@@ -76,6 +76,7 @@ export function useColumns(): VxeTableGridOptions['columns'] {
     {
       field: 'name',
       title: '车辆名称',
+       width: 400,
     },
     // {
     //   field: 'id',
@@ -84,13 +85,13 @@ export function useColumns(): VxeTableGridOptions['columns'] {
     // },
     {
       field: 'carNum',
-      title: '车辆车牌',
-      width: 200,
+      title: '车牌号码',
+      width: 400,
     },
     {
       field: 'driverName',
       title: '驾驶员',
-      width: 200,
+      width: 400,
     },
     // {
     //   field: 'createTime',

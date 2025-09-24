@@ -524,7 +524,7 @@ export function useColumns(): VxeTableGridOptions['columns'] {
     {
       field: 'name',
       title: '产品名称',
-      width: 200,
+      width: 500,
     },
     {
       field: 'baseName',

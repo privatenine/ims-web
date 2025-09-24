@@ -84,10 +84,12 @@ export function useColumns(): VxeTableGridOptions['columns'] {
     {
       field: 'storageName',
       title: '仓库名称',
+      width: 400,
     },
     {
       field: 'name',
       title: '库位',
+      width: 400,
     },
   ];
 }

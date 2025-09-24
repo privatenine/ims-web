@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="query-form-container">
+    <div class="query-form-container" >
       <!-- 搜索表单 -->
       <el-form
         :model="queryParams"
@@ -143,8 +143,8 @@
       </el-form>
     </div>
 
-    <div class="query-btn-container">
-      <ElButtonGroup class="ml-4">
+    <div class="query-btn-container" style="background-color:#FFF;">
+      <ElButtonGroup class="ml-4" >
         <ElButton
           type="primary"
           @click="handleAdd"
@@ -157,6 +157,7 @@
           />
           新增
         </ElButton>
+
         <ElButton
           type="primary"
           @click="handleUpdate"
@@ -259,30 +260,32 @@
         </ElButton>
       </ElButtonGroup>
     </div>
-    <!-- 分页列表 -->
-    <div class="table-container">
+
+
+
+    <!-- 分页列表  font-weight: bold !important-->
+
+    <div class="table-container" >
       <el-table
-        :data="tableData"
+        :data="tableData"     
         stripe
-        style="width: 100%"
+        style="width: 100% "  
         @row-click="handleRowClick"
         v-auto-fit-height
+        class="tabie1"
       >
-        <el-table-column width="30" align="center">
-          <template #default="{ row }">
-            <el-radio v-model="selectedRowId" :value="row.dataId" @click.stop>
+        <el-table-column width="30"  >
+          <template #default="{ row }"   >
+            <el-radio v-model="selectedRowId" :value="row.dataId" @click.stop >
               &nbsp;
             </el-radio>
           </template>
         </el-table-column>
+        
         <el-table-column type="index" width="60" label="序号" />
-        <el-table-column prop="name" label="产品名称" width="200" />
-        <el-table-column prop="jianPinCode" label="简拼码" width="100" />
-        <el-table-column prop="baseName" label="通用车型" width="100" />
-        <el-table-column prop="carModelName" label="车型名称" width="100" />
-        <el-table-column prop="carSeriesName" label="车系名称" width="100" />
-        <el-table-column prop="carTypeName" label="类型名称" width="100" />
-        <el-table-column prop="dataEnable" label="状态" width="80">
+        <el-table-column prop="name" label="产品名称" width="400"  />
+        
+        <el-table-column prop="dataEnable" label="公用状态" width="80" >
           <template #default="{ row }">
             <ElTag
               :type="productDataEnableMap[row.dataEnable]?.color || 'danger'"
@@ -291,30 +294,12 @@
             </ElTag>
           </template>
         </el-table-column>
-        <el-table-column prop="dataRemark" label="备注" width="200" />
-        <el-table-column prop="dataUpdateTime" label="修改时间" width="100">
-          <template #default="{ row }">
-            {{ dayjs(row.dataUpdateTime).format('YYYY-MM-DD') }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="diagonal" label="对角" width="80" />
-        <el-table-column prop="downLength" label="下长" width="80" />
-        <el-table-column prop="jianPinCode" label="简拼码" width="200" />
-        <el-table-column prop="listYear" label="上市年份" width="80" />
+        
         <el-table-column prop="lowerLimit" label="下限" width="80" />
-        <el-table-column prop="middleLength" label="中高" width="80" />
-        <el-table-column prop="norms" label="规格" width="80" />
-        <el-table-column prop="positionName" label="安装位置名称" width="100" />
-        <el-table-column
-          prop="settingsCreateTime"
-          label="辅助表创建时间"
-          width="110"
-        >
-          <template #default="{ row }">
-            {{ dayjs(row.settingsCreateTime).format('YYYY-MM-DD') }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="settingsEnable" label="是否在用" width="80">
+        <el-table-column prop="upperLimit" label="上限" width="80" />
+        <el-table-column prop="settingsRemark" label="备注" width="200" />
+
+        <el-table-column prop="settingsEnable" label="状态" width="80">
           <template #default="{ row }">
             <ElTag
               :type="
@@ -325,18 +310,59 @@
             </ElTag>
           </template>
         </el-table-column>
-        <el-table-column prop="settingsRemark" label="辅助表备注" width="200" />
+
+      
+
+        <el-table-column prop="baseName" label="通用车型" width="400" />
+
+        <el-table-column prop="middleLength" label="中高" width="80" />
+        <el-table-column prop="diagonal" label="对角" width="80" />
+        <el-table-column prop="downLength" label="下长" width="80" />
+
+        <el-table-column prop="carSeriesName" label="车系" width="100" />
+        <el-table-column prop="carModelName" label="车型" width="100" />
+        <el-table-column prop="positionName" label="安装位置" width="100" />
+
+        <el-table-column prop="carTypeName" label="类型" width="100" />
+        <el-table-column prop="listYear" label="上市年份" width="80" />
+        <el-table-column prop="stopYear" label="停产年份" width="80" />
+        <el-table-column prop="dataRemark" label="公用资料备注" width="200" />
+        <el-table-column prop="dataUpdateTime" label="修改时间" width="100">
+          <template #default="{ row }">
+            {{ dayjs(row.dataUpdateTime).format('YYYY-MM-DD') }}
+          </template>
+        </el-table-column>
+       
+        <el-table-column prop="jianPinCode" label="简拼码" width="200" />
+        
+    
+        <el-table-column prop="norms" label="规格" width="80" />
+        
+        <el-table-column
+          prop="settingsCreateTime"
+          label="辅助表创建时间"
+          width="110"
+        >
+          <template #default="{ row }">
+            {{ dayjs(row.settingsCreateTime).format('YYYY-MM-DD') }}
+          </template>
+        </el-table-column>
+        
+       
         <el-table-column
           prop="settingsUpdateTime"
-          label="辅助表修改时间"
+          label="修改时间"
           width="110"
         >
           <template #default="{ row }">
             {{ dayjs(row.settingsUpdateTime).format('YYYY-MM-DD') }}
           </template>
         </el-table-column>
-        <el-table-column prop="stopYear" label="停产年份" width="80" />
-        <el-table-column prop="upperLimit" label="上限" width="80" />
+        
+        
+        
+
+
       </el-table>
     </div>
     <!-- 分页控件 -->
@@ -700,3 +726,20 @@ const handleCurrentChange = (val: number) => {
   getList();
 };
 </script>
+
+<style scoped>
+:deep(.tabie1){  
+  color: #000;     
+  font-size: 16px !important;
+  font-weight: 500 !important; /* 加黑加粗 */
+  letter-spacing: 0px; /* 字间距微调 */
+}
+
+:deep(.el-table__header th ){    
+  color: #000;     
+  font-size: 14px !important;
+  font-weight: 900 !important; /* 加黑加粗 */
+  letter-spacing: 0.5px; /* 字间距微调 */
+}
+
+</style>

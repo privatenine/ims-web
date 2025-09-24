@@ -51,10 +51,13 @@ const [Grid, gridApi] = useVbenVxeGrid<CarApi.Car>({
         },
       },
     },
+
+    
     rowConfig: {
       keyField: 'id',
       isCurrent: true,
       isHover: true,
+      //stripe: true,
     },
     radioConfig: {
       // labelField: 'name',

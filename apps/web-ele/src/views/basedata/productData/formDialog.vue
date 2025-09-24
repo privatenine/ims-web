@@ -5,6 +5,7 @@
     width="1200"
     append-to-body
     draggable
+    style="background-color: aquamarine;"
     class="form-dialog"
   >
     <div class="dialog-content">
@@ -617,4 +618,5 @@ const handleNormsInputChange = () => {
   flex: 1;
   overflow: hidden;
 }
+
 </style>
