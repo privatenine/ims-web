@@ -88,7 +88,12 @@
 
     <div class="query-btn-container">
       <ElButtonGroup class="ml-4">
-        <ElButton type="primary" disabled>
+        <ElButton
+          v-if="rights.includes('详情')"
+          type="primary"
+          disabled
+          @click="handleDetail"
+        >
           <IconifyIcon
             icon="fluent:apps-list-detail-20-regular"
             class="size-5"
@@ -96,7 +101,11 @@
           />
           详情
         </ElButton>
-        <ElButton type="primary" @click="handleAdd()">
+        <ElButton
+          v-if="rights.includes('新增')"
+          type="primary"
+          @click="handleAdd()"
+        >
           <IconifyIcon
             icon="ant-design:plus-outlined"
             class="size-5"
@@ -104,7 +113,14 @@
           />
           新增
         </ElButton>
-        <ElButton type="primary" @click="handleUpdate">
+        <ElButton
+          v-if="rights.includes('修改')"
+          type="primary"
+          :disabled="
+            !selectedRow?.id || ![1, 8].includes(selectedRow.statusFlag)
+          "
+          @click="handleUpdate"
+        >
           <IconifyIcon
             class="size-5"
             style="margin-right: 4px"
@@ -112,7 +128,14 @@
           />
           修改
         </ElButton>
-        <ElButton type="danger" @click="handleDelete">
+        <ElButton
+          v-if="rights.includes('删除')"
+          type="danger"
+          :disabled="
+            !selectedRow?.id || ![1, 8].includes(selectedRow.statusFlag)
+          "
+          @click="handleDelete"
+        >
           <IconifyIcon
             class="size-5"
             style="margin-right: 4px"
@@ -120,7 +143,12 @@
           />
           删除
         </ElButton>
-        <ElButton type="primary" @click="handleApproveBill">
+        <ElButton
+          v-if="rights.includes('审核')"
+          type="primary"
+          :disabled="!selectedRow?.id || selectedRow.statusFlag !== 2"
+          @click="handleApproveBill"
+        >
           <IconifyIcon
             icon="mdi:check"
             class="size-5"
@@ -129,7 +157,12 @@
           通过
         </ElButton>
         <!-- 驳回按钮 -->
-        <ElButton type="danger" @click="handleRejectBill">
+        <ElButton
+          v-if="rights.includes('审核')"
+          type="danger"
+          :disabled="!selectedRow?.id || selectedRow.statusFlag !== 2"
+          @click="handleRejectBill"
+        >
           <IconifyIcon
             icon="mdi:close"
             class="size-5"
@@ -138,14 +171,19 @@
           驳回
         </ElButton>
         <!-- 出库按钮 -->
-        <ElButton type="primary" @click="handleOutboundBill">
+        <ElButton
+          v-if="rights.includes('出库')"
+          type="primary"
+          :disabled="!selectedRow?.id || selectedRow.statusFlag !== 3"
+          @click="handleOutboundBill"
+        >
           <IconifyIcon
             icon="mdi:folder-move-outline"
             class="size-5"
             style="margin-right: 4px"
           />出库
         </ElButton>
-        <ElButton type="primary" disabled>
+        <ElButton v-if="rights.includes('下载')" type="primary">
           <IconifyIcon
             icon="mdi:download"
             class="size-5"
@@ -153,22 +191,32 @@
           />下载
         </ElButton>
         <!-- 取消订单按钮 -->
-        <ElButton type="danger" @click="handleCancelBill">
+        <ElButton
+          v-if="rights.includes('作废')"
+          type="danger"
+          :disabled="!selectedRow?.id || ![3].includes(selectedRow.statusFlag)"
+          @click="handleCancelBill"
+        >
           <IconifyIcon
             icon="mdi:selection-remove"
             class="size-5"
             style="margin-right: 4px"
           />取消订单
         </ElButton>
-        <ElButton type="primary" disabled>
+        <ElButton
+          v-if="rights.includes('收款')"
+          type="primary"
+          :disabled="!selectedRow?.id || selectedRow.statusFlag !== 4"
+          @click="handleReceipt"
+        >
           <IconifyIcon
             icon="mdi:currency-jpy"
             class="size-5"
             style="margin-right: 4px"
           />收款
         </ElButton>
-        <ElDropdown type="primary">
-          <ElButton type="primary">
+        <ElDropdown v-if="rights.includes('打印')" type="primary">
+          <ElButton type="primary" :disabled="!selectedRow?.id">
             <IconifyIcon
               class="size-5"
               style="margin-right: 4px"
@@ -293,11 +341,18 @@
       :skip-num="printSkipNum"
       @close="printDialogVis = false"
     />
+    <rpSaleDialog
+      v-model:visible="receiptDialogVis"
+      :form-data="receiptData"
+      @confirm="getList"
+      @close="receiptDialogVis = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { IconifyIcon } from '@vben/icons';
 
@@ -313,11 +368,15 @@ import {
   outboundBill,
   rejectBill,
 } from '#/api';
+import { useMenuRights } from '#/utils';
 
 import DetailDialog from './detailDialog.vue';
 import formDialog from './formDialog.vue';
 // 添加引入打印预览对话框组件
 import printDialog from './printDialog.vue';
+import rpSaleDialog from './rpSaleDialog.vue';
+
+const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
 
 // 获取用户信息
 const userInfoStr = localStorage.getItem('userInfo');
@@ -332,7 +391,7 @@ const billStatusFlagMap = {
   6: { name: '退货', color: 'danger' },
   7: { name: '作废', color: 'danger' },
   8: { name: '驳回', color: 'danger' },
-  9: { name: '已结算', color: 'success' },
+  9: { name: '已结算', color: 'danger' },
 };
 
 // 添加配送类型映射
@@ -360,6 +419,10 @@ const printDialogVis = ref(false);
 const printData = ref({});
 const printMode = ref('');
 const printSkipNum = ref(0);
+
+// 添加收款弹框相关的变量
+const receiptDialogVis = ref(false);
+const receiptData = ref({});
 
 // 添加选中行的ID
 const selectedRowId = ref('');
@@ -434,6 +497,7 @@ const handleAdd = () => {
     formDialogVis.value = true;
   });
 };
+function handleDetail() {}
 
 function handleUpdate() {
   if (!selectedRow.value?.id) {
@@ -675,6 +739,28 @@ function handleCancelBill() {
     })
     .catch(() => {});
 }
+
+function handleReceipt() {
+  if (!selectedRow.value?.id) {
+    ElMessage({
+      message: `请选择一条数据!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  if (selectedRow.value.statusFlag !== 4) {
+    ElMessage({
+      message: `只有出库完成状态的销售单可以结算!`,
+      type: 'warning',
+      plain: true,
+    });
+    return;
+  }
+  receiptData.value = selectedRow.value;
+  receiptDialogVis.value = true;
+}
+
 function handlePrint(mode) {
   if (!selectedRow.value?.id) {
     ElMessage({

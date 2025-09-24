@@ -166,6 +166,13 @@ async function outboundBill(data: any) {
   );
 }
 
+async function rpParam(mainId: number) {
+  return requestClient.get<any>(`/sale/rpParam?mainId=${mainId}`);
+}
+async function rpSale(data: any) {
+  return requestClient.post('/sale/rpSale', data);
+}
+
 export {
   approveBill,
   cancelBill,
@@ -177,5 +184,7 @@ export {
   getBillList,
   outboundBill,
   rejectBill,
+  rpParam,
+  rpSale,
   updateBill,
 };

@@ -29,18 +29,18 @@
           </div>
         </div>
         <div v-for="(item, index) in tableData" :key="index" class="label-item">
-          <div class="customer-name">{{ item.customerName || '' }}</div>
+          <div class="customer-name">{{ item.customerName || '' }} 附件信息占位</div>
           <div class="product-name">{{ item.productName }}</div>
           <div class="divider"></div>
           <div class="details-row">
-            <span class="detail-item">单号: {{ item.code || '' }}</span>
+            <span class="detail-item"> {{ item.code || '' }}</span>
           </div>
           <div class="details-row">
-            <span class="detail-item">仓库: {{ item.warehouse }}</span>
-            <span class="detail-item">产地: {{ item.origin }}</span>
+            <span class="detail-item">{{ item.warehouse }}</span>
+            <span class="detail-item">{{ item.origin }}</span>
           </div>
           <div class="details-row">
-            <span class="detail-item">日期: {{ formatDate(item.date) }}</span>
+            <span class="detail-item">id占位 {{ formatDate(item.date) }}</span>
           </div>
         </div>
       </div>

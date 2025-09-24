@@ -276,7 +276,15 @@
           </template>
         </el-table-column>
         <el-table-column type="index" width="60" label="序号" />
-        <el-table-column prop="name" label="产品名称" width="200" />
+        <el-table-column prop="name" label="产品名称" width="200">
+          <template #default="{ row }">
+            <span v-if="row.name && row.name.includes('/')">
+              <strong>{{ row.name.split('/')[0] }}</strong>
+              <span style="color: #666;">{{ '/' + row.name.split('/').slice(1).join('/') }}</span>
+            </span>
+            <span v-else>{{ row.name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="jianPinCode" label="简拼码" width="100" />
         <el-table-column prop="baseName" label="通用车型" width="100" />
         <el-table-column prop="carModelName" label="车型名称" width="100" />

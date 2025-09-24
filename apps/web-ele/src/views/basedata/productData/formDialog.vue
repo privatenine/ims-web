@@ -383,7 +383,44 @@ const form = ref({
 
 // 表单验证规则
 const rules = ref<FormRules>({
-  name: [{ required: true, message: '产品名称不能为空', trigger: 'blur' }],
+  name: [
+    { required: true, message: '产品名称不能为空', trigger: 'blur' },
+    {
+      validator: (rule: any, value: string, callback: any) => {
+        if (!value) {
+          callback();
+          return;
+        }
+
+        const forbiddenKeywords = [
+          '胶条',
+          '支架',
+          '厂标',
+          '原标',
+          '配套',
+          '原厂',
+          '镜座',
+          '总成',
+          '摄像头',
+          '雨感座',
+          '包边',
+          '带座',
+          '感应座',
+        ];
+
+        const foundKeyword = forbiddenKeywords.find((keyword) =>
+          value.includes(keyword),
+        );
+
+        if (foundKeyword) {
+          callback(new Error('附件信息需要入库时才能录入，请修改！'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
   // baseId: [{ required: true, message: '通用车型不能为空', trigger: 'change' }],
   enable: [{ required: true, message: '启用状态不能为空', trigger: 'change' }],
 });
