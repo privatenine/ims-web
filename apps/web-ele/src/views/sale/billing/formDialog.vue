@@ -548,8 +548,8 @@ const storageConfirm = (data) => {
   subformDialogVis.value = true;
 };
 const subConfirm = (data) => {
-  // 当入库和明细都是新增时，新增明细传id:0,接口返回时会同时创建明细和入库id
-  form.value.id = form.value.id || data.saleId;
+  // 新增明细后，主表的数据由saleMainRespVO返回
+  form.value = Object.assign({}, form.value, data.saleMainRespVO);
   getSubList();
 };
 
@@ -595,6 +595,18 @@ const handleDelete = () => {
     })
     .catch(() => {});
 };
+
+// 监听优惠金额变化，联动更新总金额
+watch(
+  () => form.value.discountMoney,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      // 重新计算总金额 = 原总金额 - 优惠金额
+      const originalTotal = (form.value.totalMoney || 0) + (oldVal || 0);
+      form.value.totalMoney = Math.max(0, originalTotal - (newVal || 0));
+    }
+  }
+);
 
 // 添加处理到货方式选择变化的函数
 const handleArrivalChange = (val: number) => {

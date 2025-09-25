@@ -49,6 +49,7 @@
               clearable
               style="width: 100%"
               @change="handleProductPlaceChange"
+              disabled
             >
               <el-option
                 v-for="item in productPlaceOptions"
@@ -75,6 +76,7 @@
               }"
               :options="attOptions"
               style="width: 100%"
+              disabled
             />
           </el-form-item>
         </el-col>
@@ -85,6 +87,7 @@
               placeholder="请输入标签数"
               :min="0"
               style="width: 100%"
+              disabled
             />
           </el-form-item>
         </el-col>
@@ -96,6 +99,7 @@
               clearable
               style="width: 100%"
               @change="handleStoreChange"
+              disabled
             >
               <el-option
                 v-for="item in storeOptions"
@@ -108,7 +112,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="库位" prop="siteName">
-            <el-input v-model="form.siteName" placeholder="请输入库位" />
+            <el-input v-model="form.siteName" placeholder="请输入库位" disabled />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -117,6 +121,7 @@
               v-model="form.limitSalePrice"
               placeholder="请输入成本价"
               style="width: 100%"
+              disabled
             />
           </el-form-item>
         </el-col>

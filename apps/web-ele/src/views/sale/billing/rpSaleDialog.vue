@@ -59,6 +59,11 @@
             />
           </el-form-item>
         </el-col>
+        <el-col :span="24">
+          <el-form-item label="金额">
+            <span>{{ initialTotalMoney }}</span>
+          </el-form-item>
+        </el-col>
         <el-col :span="12">
           <el-form-item label="实收金额" prop="totalMoney">
             <el-input-number
@@ -66,6 +71,7 @@
               placeholder="请输入实收金额"
               :min="0"
               style="width: 100%"
+              @change="handleTotalMoneyChange"
             />
           </el-form-item>
         </el-col>
@@ -76,6 +82,7 @@
               placeholder="请输入优惠金额"
               :min="0"
               style="width: 100%"
+              @change="handleDiscountMoneyChange"
             />
           </el-form-item>
         </el-col>
@@ -126,6 +133,9 @@ const confirmLoading = ref(false);
 // 添加: 银行选项数据
 const bankOptions = ref([]);
 
+// 添加: 记录初始金额
+const initialTotalMoney = ref(0);
+
 // 表单数据
 const form = ref({
   mainId: '',
@@ -147,6 +157,9 @@ const rules = ref<FormRules>({
   bankId: [{ required: true, message: '请选择收款方式', trigger: 'change' }],
   totalMoney: [
     { required: true, message: '请输入实收金额', trigger: 'change' },
+  ],
+  discountMoney: [
+    { required: true, message: '请输入优惠金额', trigger: 'change' },
   ],
 });
 
@@ -186,6 +199,8 @@ watch(
         form.value.discountMoney = props.formData.discountMoney;
         form.value.totalMoney = props.formData.totalMoney;
         form.value.version = props.formData.version;
+        // 记录初始金额
+        initialTotalMoney.value = props.formData.totalMoney;
         // 使用rpParam方法为form赋值
         rpParam(props.formData.id).then((res) => {
           form.value.skCode = res.data.skCode;
@@ -210,6 +225,8 @@ watch(
           remark: '',
           version: 0,
         };
+        // 重置初始金额
+        initialTotalMoney.value = 0;
       }
     }
   },
@@ -219,6 +236,35 @@ watch(
 watch(vis, (newVal) => {
   emit('update:visible', newVal);
 });
+
+// 添加: 处理实收金额变化
+const handleTotalMoneyChange = (val: number) => {
+  if (val < 0) {
+    form.value.totalMoney = 0;
+    return;
+  }
+
+  // 实现金额联动：优惠金额 + 实收金额 = 初始金额
+  const calculatedDiscount = initialTotalMoney.value - val;
+  if (calculatedDiscount >= 0) {
+    form.value.discountMoney = calculatedDiscount;
+  } else {
+    form.value.discountMoney = 0;
+    form.value.totalMoney = initialTotalMoney.value;
+  }
+};
+
+// 添加: 处理优惠金额变化
+const handleDiscountMoneyChange = (val: number) => {
+  // 实现金额联动：实收金额 = 初始金额 - 优惠金额
+  const calculatedTotal = initialTotalMoney.value - val;
+  if (calculatedTotal >= 0) {
+    form.value.totalMoney = calculatedTotal;
+  } else {
+    form.value.totalMoney = 0;
+    form.value.discountMoney = initialTotalMoney.value;
+  }
+};
 
 const handleCancel = () => {
   vis.value = false;

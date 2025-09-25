@@ -250,12 +250,11 @@
     </div>
     <!-- 分页列表 -->
     <div class="table-container">
-      <el-table
+      <ZyTable
         :data="tableData"
-        stripe
         style="width: 100%"
         @row-click="handleRowClick"
-        v-auto-fit-height
+        auto-fit-height
       >
         <el-table-column width="30" align="center" fixed="left">
           <template #default="{ row }">
@@ -304,7 +303,7 @@
         <el-table-column prop="profit" label="利润" width="100" />
         <el-table-column prop="profitMargin" label="利润率" width="100" />
         <el-table-column prop="remark" label="订单备注" width="300" />
-      </el-table>
+      </ZyTable>
     </div>
     <!-- 分页控件 -->
     <div class="pagination-container">
@@ -774,6 +773,7 @@ function handlePrint(mode) {
     ElMessageBox.prompt('请输入打印标签要跳过的个数(不填写则不跳过)', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
+      inputValue: 0,
       inputPattern: /^$|^[1-9]\d*$/,
       inputErrorMessage: '请输入正整数或留空',
     })

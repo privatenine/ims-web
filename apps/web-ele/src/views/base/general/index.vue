@@ -262,12 +262,12 @@
     </div>
     <!-- 分页列表 -->
     <div class="table-container">
-      <el-table
+      <ZyTable
         :data="tableData"
         stripe
         style="width: 100%"
         @row-click="handleRowClick"
-        v-auto-fit-height
+        auto-fit-height
       >
         <el-table-column width="30" align="center">
           <template #default="{ row }">
@@ -338,7 +338,7 @@
         </el-table-column>
         <el-table-column prop="stopYear" label="停产年份" width="80" />
         <el-table-column prop="upperLimit" label="上限" width="80" />
-      </el-table>
+      </ZyTable>
     </div>
     <!-- 分页控件 -->
     <div class="pagination-container">

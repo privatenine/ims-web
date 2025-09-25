@@ -26,6 +26,7 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -43,6 +44,7 @@
     "@vueuse/core": "catalog:",
     "dayjs": "catalog:",
     "element-plus": "catalog:",
+    "lodash-unified": "^1.0.3",
     "pinia": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"

@@ -236,12 +236,12 @@
     </div>
     <!-- 分页列表 -->
     <div class="table-container">
-      <el-table
+      <ZyTable
         :data="tableData"
         stripe
         style="width: 100%"
         @row-click="handleRowClick"
-        v-auto-fit-height
+        auto-fit-height
       >
         <el-table-column width="30" align="center">
           <template #default="{ row }">
@@ -283,7 +283,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注" width="200" />
-      </el-table>
+      </ZyTable>
     </div>
     <!-- 分页控件 -->
     <div class="pagination-container">
