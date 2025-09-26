@@ -362,7 +362,7 @@ import {
   approveBill,
   cancelBill,
   deleteBillById,
-  getBillCode,
+  // getBillCode,
   getBillList,
   outboundBill,
   rejectBill,
@@ -375,6 +375,7 @@ import formDialog from './formDialog.vue';
 import printDialog from './printDialog.vue';
 import rpSaleDialog from './rpSaleDialog.vue';
 
+const router = useRouter();
 const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
 
 // 获取用户信息
@@ -487,15 +488,17 @@ const getList = async () => {
 };
 
 const handleAdd = () => {
-  getBillCode().then(({ data }: { data: string }) => {
-    formData.value = {
-      code: data,
-      orderTime: new Date(),
-      createName: nUserInfo.realName || '',
-    };
-    formDialogVis.value = true;
-  });
+  router.push({ path: '/sale/billing/add' });
+  // getBillCode().then(({ data }: { data: string }) => {
+  //   formData.value = {
+  //     code: data,
+  //     orderTime: new Date(),
+  //     createName: nUserInfo.realName || '',
+  //   };
+  //   formDialogVis.value = true;
+  // });
 };
+
 function handleDetail() {}
 
 function handleUpdate() {

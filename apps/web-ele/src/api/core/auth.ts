@@ -62,10 +62,3 @@ export async function logoutApi() {
 export async function getAccessCodesApi() {
   return requestClient.get<string[]>('/auth/codes');
 }
-
-/**
- * 获取所有菜单
- */
-// export async function getMenuList1() {
-//   return requestClient.get('/login/getAllMenuTree');
-// }

@@ -151,6 +151,8 @@ function setupAccessGuard(router: Router) {
       sort?: number;
       component?: string;
       children?: MenuItem[];
+      hideInMenu?: number;
+      menuType?: number;
     }
     const toRouters = (list: MenuItem[]): MenuItem[] => {
       if (!Array.isArray(list)) {
@@ -162,21 +164,25 @@ function setupAccessGuard(router: Router) {
         .map((item) => ({
           name: item.name,
           path: item.path,
+          menuType: item.menuType,
           meta: {
             icon: item.icon,
             title: item.name,
             order: item.sort,
+            hideInMenu: item.hideInMenu||item.hidelnMenu,
           },
           children: (item.children || [])
             .filter((n) => n.path && n.component)
             .map((child) => ({
               name: child.name,
               path: child.path,
+              menuType: child.menuType,
               component: modules[`../views/${child.component}.vue`],
               meta: {
                 affixTab: false,
                 icon: item.icon,
                 title: child.name,
+                hideInMenu: child.hideInMenu||child.hidelnMenu,
               },
             })),
         }));
@@ -184,10 +190,11 @@ function setupAccessGuard(router: Router) {
     const userRoles = userInfo.roles ?? [];
     let routerList = [];
     try {
+      // routerList = toRouters(mockMenuData.data);
       const menuData = await authStore.fetchMeunList();
       routerList = toRouters(menuData.data);
       console.log('获取菜单数据成功:', menuData.data);
-    } catch (error) {
+    } catch {
       console.error('获取菜单数据失败,使用mock菜单数据');
       routerList = toRouters(mockMenuData.data);
       // // 如果菜单获取失败，尝试重新获取用户信息和菜单
