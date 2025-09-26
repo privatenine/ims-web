@@ -350,7 +350,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onActivated, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { IconifyIcon } from '@vben/icons';
@@ -378,9 +378,6 @@ import rpSaleDialog from './rpSaleDialog.vue';
 const router = useRouter();
 const { rights } = useMenuRights(useRouter().currentRoute.value.fullPath);
 
-// 获取用户信息
-const userInfoStr = localStorage.getItem('userInfo');
-const nUserInfo = userInfoStr ? JSON.parse(userInfoStr) : {};
 // 添加订单状态映射
 const billStatusFlagMap = {
   1: { name: '草稿', color: 'info' },
@@ -404,6 +401,11 @@ const billDistributionFlagMap = {
 
 // 初始化时获取数据
 onMounted(() => {
+  getList();
+});
+
+// 页面激活时重新获取数据
+onActivated(() => {
   getList();
 });
 
@@ -488,15 +490,7 @@ const getList = async () => {
 };
 
 const handleAdd = () => {
-  router.push({ path: '/sale/billing/add' });
-  // getBillCode().then(({ data }: { data: string }) => {
-  //   formData.value = {
-  //     code: data,
-  //     orderTime: new Date(),
-  //     createName: nUserInfo.realName || '',
-  //   };
-  //   formDialogVis.value = true;
-  // });
+  router.push({ path: '/sale/billing/add', query: { mode: 'add' } });
 };
 
 function handleDetail() {}
@@ -518,8 +512,10 @@ function handleUpdate() {
     });
     return;
   }
-  formData.value = selectedRow.value;
-  formDialogVis.value = true;
+  router.push({
+    path: '/sale/billing/update',
+    query: { mode: 'update', id: selectedRow.value.id },
+  });
 }
 
 function openDetail() {
