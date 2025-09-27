@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="vis" :title="title" draggable append-to-body width="800">
+  <el-dialog v-model="vis" :title="title" draggable append-to-body width="600" >
     <el-form
       ref="formRef"
       :model="form"
@@ -7,9 +7,10 @@
       label-width="120px"
       :inline="false"
       class="sub-form"
+      
     >
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="22">
           <el-form-item label="数量" prop="num">
             <el-input-number
               v-model="form.num"
@@ -20,7 +21,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="22">
           <el-form-item label="单价" prop="price">
             <el-input-number
               v-model="form.price"
@@ -31,17 +32,20 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="24">
-          <el-form-item label="备注" prop="remark">
-            <el-input
-              v-model="form.remark"
-              placeholder="请输入备注"
-              type="textarea"
-              :rows="4"
+
+        <el-col :span="22">
+          <el-form-item label="标签数" prop="printLabel">
+            <el-input-number
+              v-model="form.printLabel"
+              placeholder="请输入标签数"
+              :min="0"
+              style="width: 100%"
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+
+       
+        <el-col :span="22">
           <el-form-item label="产地" prop="productPlaceId">
             <el-select
               v-model="form.productPlaceId"
@@ -55,11 +59,12 @@
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
+                :disabled="true"
               />
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="22">
           <el-form-item label="附件" prop="productAttListTemp">
             <el-cascader
               v-model="form.productAttListTemp"
@@ -75,20 +80,12 @@
               }"
               :options="attOptions"
               style="width: 100%"
+              :disabled="true"
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="标签数" prop="printLabel">
-            <el-input-number
-              v-model="form.printLabel"
-              placeholder="请输入标签数"
-              :min="0"
-              style="width: 100%"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
+        
+        <el-col :span="22">
           <el-form-item label="仓库" prop="storeId">
             <el-select
               v-model="form.storeId"
@@ -96,32 +93,52 @@
               clearable
               style="width: 100%"
               @change="handleStoreChange"
+              :disabled="true"
             >
               <el-option
                 v-for="item in storeOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
+                
               />
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        
+         <el-col :span="22">
           <el-form-item label="库位" prop="siteName">
-            <el-input v-model="form.siteName" placeholder="请输入库位" />
+            <el-input v-model="form.siteName" placeholder="请输入库位"  :disabled="true"/>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+
+         <el-col :span="22">
+          <el-form-item label="备注" prop="remark">
+            <el-input
+              v-model="form.remark"
+              placeholder="请输入备注"
+              type="textarea"
+              :rows="1"
+            />
+          </el-form-item>
+        </el-col>
+
+       
+        <el-col :span="22" :style="{ display: 'none'  }">
           <el-form-item label="成本价" prop="limitSalePrice">
             <el-input-number
               v-model="form.limitSalePrice"
               placeholder="请输入成本价"
               style="width: 100%"
+              :disabled="true"
             />
           </el-form-item>
         </el-col>
+
+
       </el-row>
     </el-form>
+
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
@@ -134,6 +151,7 @@
         </el-button>
       </div>
     </template>
+
   </el-dialog>
 </template>
 
